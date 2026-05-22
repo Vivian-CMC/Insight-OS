@@ -325,10 +325,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
           </div>
         </div>
         <div class="nodes-grid" id="nodesGrid">
-          <div class="empty-state" id="emptyState">
-            <div class="empty-icon">◎</div>
-            <div class="empty-text">尚無節點<br>貼入任何內容，按「萃取節點」開始</div>
-          </div>
+          <div class="empty-state"><div class="empty-icon">◎</div><div class="empty-text">尚無節點<br>貼入任何內容，按「萃取節點」開始</div></div>
         </div>
       </div>
 
@@ -733,17 +730,13 @@ function tagLabel(t) {
 
 function renderNodes(list) {
   const grid = document.getElementById('nodesGrid');
-  const empty = document.getElementById('emptyState');
-  let filtered = list || nodes;
-  if (activeFilter) filtered = filtered.filter(n => n.tags && n.tags.includes(activeFilter));
+  let filtered = (list !== undefined) ? list : nodes;
+  if (activeFilter) filtered = filtered.filter(n => Array.isArray(n.tags) && n.tags.includes(activeFilter));
 
   if (!filtered.length) {
-    grid.innerHTML = '';
-    empty.style.display = 'block';
-    grid.appendChild(empty);
+    grid.innerHTML = '<div class="empty-state"><div class="empty-icon">◎</div><div class="empty-text">尚無節點<br>貼入任何內容，按「萃取節點」開始</div></div>';
     return;
   }
-  empty.style.display = 'none';
 
   grid.innerHTML = filtered.map((n, i) => {
     const sourceHtml = n.sourceUrl
@@ -769,10 +762,13 @@ function filterByType(type) {
   activeFilter = type;
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   document.getElementById(type ? `filter-${type}` : 'filter-all')?.classList.add('active');
-  renderNodes();
+  renderNodes(undefined);
 }
 
 function filterByTrack(track) {
+  activeFilter = null;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('filter-all')?.classList.add('active');
   renderNodes(nodes.filter(n => n.track === track || n.track === 'both'));
 }
 
