@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Insight OS</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #edf0f5;
+  --surface: #f6f8fb;
+  --surface2: #ffffff;
+  --border: rgba(90,110,150,0.11);
+  --border-mid: rgba(90,110,150,0.2);
+  --text: #28304a;
+  --text-mid: #5a6480;
+  --text-dim: #96a0b8;
+  --a: #4a7fc1;
+  --b: #c17a4a;
+  --c: #6a7fc1;
+  --d: #b84a6a;
+  --ga: rgba(74,127,193,0.08);
+  --gb: rgba(193,122,74,0.08);
+  --gc: rgba(106,127,193,0.08);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-serif;font-weight:300;min-height:100vh;}
+.shell{display:grid;grid-template-columns:210px 1fr;grid-template-rows:50px 1fr;min-height:100vh;}
+
+/* TOPBAR */
+.topbar{grid-column:1/-1;display:flex;align-items:center;padding:0 22px;gap:14px;background:var(--surface2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.logo{font-family:'DM Serif Display',serif;font-size:16px;letter-spacing:0.03em;color:var(--text);}
+.logo span{color:var(--a);}
+.topbar-sep{flex:1;}
+.topbar-tag{font-size:9px;color:var(--text-dim);letter-spacing:0.1em;text-transform:uppercase;border:1px solid var(--border-mid);padding:3px 8px;border-radius:20px;}
+.firebase-status{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text-dim);}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--text-dim);}
+.status-dot.connected{background:#4caf7d;}
+
+/* SIDEBAR */
+.sidebar{background:var(--surface2);border-right:1px solid var(--border);padding:18px 0;overflow-y:auto;}
+.sidebar-label{font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-dim);padding:0 16px 6px;}
+.sidebar-section{margin-bottom:22px;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 16px;cursor:pointer;color:var(--text-mid);font-size:12px;transition:all 0.15s;border-left:2px solid transparent;}
+.nav-item:hover{color:var(--text);background:var(--bg);}
+.nav-item.active{color:var(--a);background:var(--ga);border-left-color:var(--a);}
+.nav-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.track-pills{padding:0 10px;display:flex;flex-direction:column;gap:6px;}
+.track-pill{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:8px;border:1px solid var(--border);cursor:pointer;font-size:11px;color:var(--text-mid);background:var(--surface);transition:all 0.15s;}
+.track-pill:hover{border-color:var(--border-mid);color:var(--text);}
+.track-pill.cmc{border-left:3px solid var(--a);}
+.track-pill.fire{border-left:3px solid var(--b);}
+.track-count{font-size:10px;color:var(--text-dim);background:var(--bg);padding:1px 7px;border-radius:10px;}
+
+/* MAIN */
+.main{display:flex;flex-direction:column;overflow:hidden;}
+
+/* CAPTURE */
+.capture-zone{background:var(--surface2);border-bottom:1px solid var(--border);padding:15px 22px 11px;}
+.capture-label{font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-dim);margin-bottom:7px;display:flex;align-items:center;gap:7px;}
+.capture-label::after{content:'最小摩擦力';color:var(--a);font-size:8px;border:1px solid rgba(74,127,193,0.3);padding:1px 5px;border-radius:3px;}
+.capture-row{display:flex;gap:8px;align-items:flex-start;}
+.capture-input{flex:1;background:var(--bg);border:1px solid var(--border-mid);border-radius:8px;padding:10px 13px;color:var(--text);font-family:inherit;font-size:12px;font-weight:300;resize:none;min-height:42px;max-height:120px;overflow-y:auto;transition:border-color 0.2s,box-shadow 0.2s;line-height:1.6;}
+.capture-input:focus{outline:none;border-color:var(--a);box-shadow:0 0 0 3px rgba(74,127,193,0.1);}
+.capture-input::placeholder{color:var(--text-dim);}
+
+/* URL preview strip */
+.url-preview{display:none;align-items:center;gap:7px;margin-top:7px;padding:6px 10px;background:var(--gc);border:1px solid rgba(106,127,193,0.2);border-radius:6px;font-size:10px;color:var(--c);}
+.url-preview.visible{display:flex;}
+.url-preview-label{font-size:9px;letter-spacing:0.08em;text-transform:uppercase;opacity:0.7;flex-shrink:0;}
+.url-preview-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;}
+.url-remove{cursor:pointer;opacity:0.5;flex-shrink:0;font-size:14px;line-height:1;}
+.url-remove:hover{opacity:1;}
+
+.capture-actions{display:flex;flex-direction:column;gap:5px;}
+.btn-extract{background:var(--a);color:#fff;border:none;border-radius:7px;padding:10px 16px;font-size:11px;font-weight:500;letter-spacing:0.04em;cursor:pointer;white-space:nowrap;transition:all 0.15s;}
+.btn-extract:hover{opacity:0.88;transform:translateY(-1px);}
+.btn-extract.loading{opacity:0.5;cursor:wait;transform:none;}
+.quick-tags{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;align-items:center;}
+.quick-tags-label{font-size:9px;color:var(--text-dim);letter-spacing:0.1em;text-transform:uppercase;}
+.qtag{font-size:10px;padding:2px 9px;border-radius:20px;border:1px solid var(--border-mid);color:var(--text-mid);cursor:pointer;transition:all 0.12s;}
+.qtag:hover{color:var(--text);}
+.qtag.a-tool,.qtag.a-concept{border-color:var(--c);color:var(--c);background:var(--gc);}
+.qtag.a-apply{border-color:var(--d);color:var(--d);background:rgba(184,74,106,0.06);}
+.qtag.a-cmc{border-color:var(--a);color:var(--a);background:var(--ga);}
+.qtag.a-fire{border-color:var(--b);color:var(--b);background:var(--gb);}
+
+/* EXTRACTION PANEL */
+.extraction-panel{background:#f0f4fb;border-bottom:1px solid var(--border);padding:12px 22px;display:none;}
+.extraction-panel.visible{display:block;animation:slideDown 0.2s ease;}
+@keyframes slideDown{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+.extraction-header{font-size:9px;letter-spacing:0.13em;text-transform:uppercase;color:var(--a);margin-bottom:9px;display:flex;align-items:center;gap:7px;}
+.pulse-dot{width:6px;height:6px;border-radius:50%;background:var(--a);animation:pulse 1.4s ease-in-out infinite;flex-shrink:0;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.3;transform:scale(0.8)}}
+.nodes-preview{display:flex;flex-wrap:wrap;gap:7px;}
+.node-chip{display:flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--border-mid);border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;transition:all 0.12s;animation:fadeIn 0.25s ease both;}
+.node-chip:hover{border-color:var(--a);}
+@keyframes fadeIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+.chip-type{font-size:8px;letter-spacing:0.07em;text-transform:uppercase;padding:1px 5px;border-radius:3px;}
+.type-tool,.type-concept{background:rgba(106,127,193,0.12);color:var(--c);}
+.type-apply{background:rgba(184,74,106,0.1);color:var(--d);}
+.btn-save-all{margin-top:9px;background:transparent;border:1px solid var(--a);color:var(--a);border-radius:6px;padding:6px 14px;font-size:11px;cursor:pointer;transition:all 0.15s;letter-spacing:0.04em;}
+.btn-save-all:hover{background:var(--ga);}
+
+/* CONTENT AREA */
+.content-area{flex:1;overflow-y:auto;padding:18px 22px;}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;}
+.stat-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 15px;position:relative;overflow:hidden;transition:border-color 0.15s,box-shadow 0.15s;}
+.stat-card:hover{border-color:var(--border-mid);box-shadow:0 2px 12px rgba(74,100,160,0.07);}
+.stat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;border-radius:0 0 10px 10px;}
+.stat-card.s-total::after{background:var(--c);}
+.stat-card.s-cmc::after{background:var(--a);}
+.stat-card.s-fire::after{background:var(--b);}
+.stat-card.s-apply::after{background:var(--d);}
+.stat-num{font-family:'DM Serif Display',serif;font-size:26px;line-height:1;margin-bottom:4px;}
+.stat-card.s-total .stat-num{color:var(--c);}
+.stat-card.s-cmc .stat-num{color:var(--a);}
+.stat-card.s-fire .stat-num{color:var(--b);}
+.stat-card.s-apply .stat-num{color:var(--d);}
+.stat-label{font-size:10px;color:var(--text-dim);letter-spacing:0.06em;}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.section-title{font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:var(--text-dim);}
+.filter-row{display:flex;gap:5px;}
+.filter-btn{font-size:10px;padding:3px 10px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text-dim);cursor:pointer;transition:all 0.12s;}
+.filter-btn:hover{border-color:var(--border-mid);color:var(--text-mid);}
+.filter-btn.active{border-color:var(--a);color:var(--a);background:var(--ga);}
+
+/* NODE CARDS */
+.nodes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:11px;}
+.node-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:15px;cursor:pointer;transition:all 0.15s;position:relative;overflow:hidden;animation:cardIn 0.3s ease both;}
+.node-card:hover{border-color:var(--border-mid);transform:translateY(-2px);box-shadow:0 6px 20px rgba(74,100,160,0.07);}
+@keyframes cardIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.node-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.node-card.track-cmc::before{background:var(--a);opacity:0.55;}
+.node-card.track-fire::before{background:var(--b);opacity:0.55;}
+.node-card.track-both::before{background:linear-gradient(90deg,var(--a),var(--b));opacity:0.65;}
+.card-tags{display:flex;gap:4px;margin-bottom:9px;flex-wrap:wrap;}
+.card-tag{font-size:9px;letter-spacing:0.07em;text-transform:uppercase;padding:2px 6px;border-radius:3px;}
+.tag-tool,.tag-concept{background:rgba(106,127,193,0.1);color:var(--c);border:1px solid rgba(106,127,193,0.18);}
+.tag-apply{background:rgba(184,74,106,0.08);color:var(--d);border:1px solid rgba(184,74,106,0.15);}
+.tag-cmc{background:rgba(74,127,193,0.08);color:var(--a);border:1px solid rgba(74,127,193,0.15);}
+.tag-fire{background:rgba(193,122,74,0.08);color:var(--b);border:1px solid rgba(193,122,74,0.15);}
+.card-title{font-size:12px;font-weight:400;color:var(--text);line-height:1.55;margin-bottom:7px;}
+.card-excerpt{font-size:11px;color:var(--text-mid);line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:11px;padding-top:9px;border-top:1px solid var(--border);gap:6px;}
+.card-source-link{font-size:9px;color:var(--a);text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px;}
+.card-source-link:hover{text-decoration:underline;}
+.card-source-text{font-size:9px;color:var(--text-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px;}
+.card-date{font-size:9px;color:var(--text-dim);flex-shrink:0;}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:48px 24px;color:var(--text-dim);}
+.empty-icon{font-size:28px;margin-bottom:10px;opacity:0.2;}
+.empty-text{font-size:12px;line-height:1.7;}
+
+/* FLOW VIEW */
+.flow-diagram{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:22px;overflow-x:auto;margin-bottom:12px;}
+.flow-title{font-size:9px;letter-spacing:0.13em;text-transform:uppercase;color:var(--text-dim);margin-bottom:18px;}
+.flow-track{display:flex;align-items:center;margin-bottom:14px;min-width:600px;}
+.flow-node{display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;}
+.flow-box{border-radius:7px;padding:7px 13px;font-size:11px;text-align:center;border:1px solid var(--border-mid);background:var(--bg);white-space:nowrap;color:var(--text-mid);}
+.flow-box.input-box{border-color:rgba(106,127,193,0.4);color:var(--c);background:rgba(106,127,193,0.05);}
+.flow-box.process-box{border-color:rgba(74,127,193,0.4);color:var(--a);background:rgba(74,127,193,0.05);}
+.flow-box.out-cmc{border-color:rgba(74,127,193,0.3);color:var(--a);}
+.flow-box.out-fire{border-color:rgba(193,122,74,0.3);color:var(--b);}
+.flow-box.out-both{border-color:rgba(74,127,193,0.35);color:var(--c);}
+.flow-sub{font-size:9px;color:var(--text-dim);letter-spacing:0.04em;text-align:center;max-width:90px;line-height:1.4;}
+.flow-connector{flex:1;display:flex;align-items:center;min-width:16px;}
+.flow-line{flex:1;height:1px;background:var(--border-mid);}
+.flow-arr{width:0;height:0;border-top:3px solid transparent;border-bottom:3px solid transparent;border-left:5px solid var(--border-mid);}
+.int-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;min-width:460px;}
+.int-card{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:13px;}
+.int-label{font-size:9px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;}
+.int-body{font-size:11px;color:var(--text-mid);line-height:1.7;}
+
+/* FIREBASE CONFIG PANEL */
+.config-panel{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:16px;}
+.config-title{font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-dim);margin-bottom:14px;}
+.config-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.config-field label{font-size:10px;color:var(--text-dim);display:block;margin-bottom:4px;letter-spacing:0.06em;}
+.config-field input{width:100%;background:var(--bg);border:1px solid var(--border-mid);border-radius:6px;padding:7px 10px;font-size:11px;color:var(--text);font-family:'DM Mono',monospace;}
+.config-field input:focus{outline:none;border-color:var(--a);}
+.btn-connect{background:var(--a);color:#fff;border:none;border-radius:7px;padding:9px 18px;font-size:11px;font-weight:500;cursor:pointer;margin-top:12px;transition:all 0.15s;letter-spacing:0.04em;}
+.btn-connect:hover{opacity:0.88;}
+.config-note{font-size:10px;color:var(--text-dim);margin-top:10px;line-height:1.6;}
+
+/* TOAST */
+.toast{position:fixed;bottom:18px;right:18px;background:var(--surface2);border:1px solid var(--a);border-radius:8px;padding:10px 16px;font-size:11px;color:var(--a);opacity:0;transform:translateY(8px);transition:all 0.2s;z-index:1000;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+.loading-dots span{animation:blink 1.2s infinite;opacity:0;}
+.loading-dots span:nth-child(2){animation-delay:0.2s;}
+.loading-dots span:nth-child(3){animation-delay:0.4s;}
+@keyframes blink{0%,80%,100%{opacity:0}40%{opacity:1}}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border-mid);border-radius:2px;}
+@media(max-width:600px){.shell{grid-template-columns:1fr;}.sidebar{display:none;}.stats-row{grid-template-columns:repeat(2,1fr);}}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="logo">Insight <span>OS</span></div>
+    <span class="topbar-sep"></span>
+    <div class="firebase-status">
+      <div class="status-dot" id="statusDot"></div>
+      <span id="statusText">未連線</span>
+    </div>
+    <div class="topbar-tag">v1.0</div>
+  </header>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">視圖</div>
+      <div class="nav-item active" onclick="switchView('library',this)">
+        <span class="nav-dot" style="background:var(--a)"></span>節點庫
+      </div>
+      <div class="nav-item" onclick="switchView('flow',this)">
+        <span class="nav-dot" style="background:var(--c)"></span>工作流程圖
+      </div>
+      <div class="nav-item" onclick="switchView('settings',this)">
+        <span class="nav-dot" style="background:var(--text-dim)"></span>Firebase 設定
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Track</div>
+      <div class="track-pills">
+        <div class="track-pill cmc" onclick="filterByTrack('cmc')">
+          <span>CMC 知識工作</span>
+          <span class="track-count" id="count-cmc">0</span>
+        </div>
+        <div class="track-pill fire" onclick="filterByTrack('fire')">
+          <span>Fire by Design</span>
+          <span class="track-count" id="count-fire">0</span>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">類型</div>
+      <div class="nav-item" onclick="filterByType('tool')">
+        <span class="nav-dot" style="background:var(--c)"></span>工具類
+      </div>
+      <div class="nav-item" onclick="filterByType('concept')">
+        <span class="nav-dot" style="background:var(--c);opacity:0.5"></span>概念類
+      </div>
+      <div class="nav-item" onclick="filterByType('apply')">
+        <span class="nav-dot" style="background:var(--d)"></span>可應用
+      </div>
+      <div class="nav-item" onclick="filterByType(null)">
+        <span class="nav-dot" style="background:var(--text-dim)"></span>全部顯示
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">摘要</div>
+      <div class="nav-item" onclick="runWeeklySummary()">
+        <span class="nav-dot" style="background:var(--b)"></span>產生週摘要
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- CAPTURE ZONE -->
+    <div class="capture-zone">
+      <div class="capture-label">快速收錄</div>
+      <div class="capture-row">
+        <div style="flex:1">
+          <textarea class="capture-input" id="captureInput"
+            placeholder="貼入文章摘要、URL、想法片段……URL 會自動偵測。按 Ctrl+Enter 萃取"
+            rows="2"
+            onkeydown="handleKeyDown(event)"
+            oninput="handleInput(this)"></textarea>
+          <div class="url-preview" id="urlPreview">
+            <span class="url-preview-label">來源 URL</span>
+            <span class="url-preview-text" id="urlPreviewText"></span>
+            <span class="url-remove" onclick="clearUrl()" title="移除 URL">×</span>
+          </div>
+          <div class="quick-tags">
+            <span class="quick-tags-label">快速標記</span>
+            <span class="qtag" id="qt-tool" onclick="toggleQTag('tool')">工具</span>
+            <span class="qtag" id="qt-concept" onclick="toggleQTag('concept')">概念</span>
+            <span class="qtag" id="qt-apply" onclick="toggleQTag('apply')">可應用</span>
+            <span class="qtag" id="qt-cmc" onclick="toggleQTag('cmc')">CMC</span>
+            <span class="qtag" id="qt-fire" onclick="toggleQTag('fire')">Fire</span>
+          </div>
+        </div>
+        <div class="capture-actions">
+          <button class="btn-extract" id="extractBtn" onclick="runExtraction()">↳ 萃取節點</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXTRACTION PANEL -->
+    <div class="extraction-panel" id="extractionPanel">
+      <div class="extraction-header" id="extractionHeader">
+        <div class="pulse-dot"></div>
+        <span class="loading-dots">萃取中<span>.</span><span>.</span><span>.</span></span>
+      </div>
+      <div class="nodes-preview" id="nodesPreview"></div>
+      <button class="btn-save-all" id="saveAllBtn" onclick="saveAllNodes()" style="display:none">＋ 全部加入節點庫</button>
+    </div>
+
+    <!-- CONTENT AREA -->
+    <div class="content-area" id="contentArea">
+
+      <!-- LIBRARY VIEW -->
+      <div id="libraryView">
+        <div class="stats-row">
+          <div class="stat-card s-total"><div class="stat-num" id="stat-total">0</div><div class="stat-label">總節點數</div></div>
+          <div class="stat-card s-cmc"><div class="stat-num" id="stat-cmc">0</div><div class="stat-label">CMC Track</div></div>
+          <div class="stat-card s-fire"><div class="stat-num" id="stat-fire">0</div><div class="stat-label">Fire Track</div></div>
+          <div class="stat-card s-apply"><div class="stat-num" id="stat-apply">0</div><div class="stat-label">可應用項目</div></div>
+        </div>
+        <div class="section-header">
+          <div class="section-title">節點庫</div>
+          <div class="filter-row">
+            <button class="filter-btn active" id="filter-all" onclick="filterByType(null)">全部</button>
+            <button class="filter-btn" id="filter-tool" onclick="filterByType('tool')">工具</button>
+            <button class="filter-btn" id="filter-concept" onclick="filterByType('concept')">概念</button>
+            <button class="filter-btn" id="filter-apply" onclick="filterByType('apply')">可應用</button>
+          </div>
+        </div>
+        <div class="nodes-grid" id="nodesGrid">
+          <div class="empty-state" id="emptyState">
+            <div class="empty-icon">◎</div>
+            <div class="empty-text">尚無節點<br>貼入任何內容，按「萃取節點」開始</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FLOW VIEW -->
+      <div id="flowView" style="display:none">
+        <div class="flow-diagram">
+          <div class="flow-title">工作流程架構</div>
+          <div style="font-size:9px;color:var(--text-dim);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:8px">輸入層 — 最小摩擦力</div>
+          <div class="flow-track">
+            <div class="flow-node"><div class="flow-box input-box">貼入任意內容</div><div class="flow-sub">URL 自動偵測</div></div>
+            <div class="flow-connector"><div class="flow-line"></div><div class="flow-arr"></div></div>
+            <div class="flow-node"><div class="flow-box input-box">快速標記</div><div class="flow-sub">Track 預設</div></div>
+            <div class="flow-connector"><div class="flow-line"></div><div class="flow-arr"></div></div>
+            <div class="flow-node"><div class="flow-box process-box">Claude 萃取</div><div class="flow-sub">節點 + 分類</div></div>
+            <div class="flow-connector"><div class="flow-line"></div><div class="flow-arr"></div></div>
+            <div class="flow-node"><div class="flow-box out-both">Firebase 節點庫</div><div class="flow-sub">線上 / 跨裝置</div></div>
+          </div>
+          <div style="font-size:9px;color:var(--text-dim);letter-spacing:0.09em;text-transform:uppercase;margin-top:14px;margin-bottom:8px">記憶層 — 不孤立</div>
+          <div class="flow-track">
+            <div class="flow-node"><div class="flow-box out-both">節點庫</div></div>
+            <div class="flow-connector"><div class="flow-line"></div><div class="flow-arr"></div></div>
+            <div class="flow-node"><div class="flow-box out-cmc">GitHub Memory</div><div class="flow-sub">HCB101.md 等</div></div>
+            <div class="flow-connector"><div class="flow-line"></div><div class="flow-arr"></div></div>
+            <div class="flow-node"><div class="flow-box out-fire">Notion Heartbeat</div><div class="flow-sub">週回顧 + 草稿</div></div>
+          </div>
+        </div>
+        <div class="flow-diagram">
+          <div class="flow-title">三個方向整合地圖</div>
+          <div class="int-grid">
+            <div class="int-card" style="border-top:2px solid var(--a)">
+              <div class="int-label" style="color:var(--a)">方向 A · CMC Memory</div>
+              <div class="int-body">GitHub repo<br>版本控制 / 決策記憶<br><span style="color:var(--a)">← export from 節點庫</span></div>
+            </div>
+            <div class="int-card" style="border-top:2px solid var(--c)">
+              <div class="int-label" style="color:var(--c)">方向 C · Insight OS</div>
+              <div class="int-body">本 App（樞紐）<br>Firebase 線上存儲<br><span style="color:var(--c)">↔ 橋接 A 和 B</span></div>
+            </div>
+            <div class="int-card" style="border-top:2px solid var(--b)">
+              <div class="int-label" style="color:var(--b)">方向 B · Heartbeat</div>
+              <div class="int-body">Notion database<br>週回顧 + 內容草稿<br><span style="color:var(--b)">→ Fire by Design</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETTINGS VIEW -->
+      <div id="settingsView" style="display:none">
+        <div class="config-panel">
+          <div class="config-title">Firebase 連線設定</div>
+          <div class="config-grid">
+            <div class="config-field"><label>API Key</label><input type="text" id="cfg-apiKey" placeholder="AIzaSy..."></div>
+            <div class="config-field"><label>Auth Domain</label><input type="text" id="cfg-authDomain" placeholder="your-app.firebaseapp.com"></div>
+            <div class="config-field"><label>Database URL</label><input type="text" id="cfg-databaseURL" placeholder="https://your-app-rtdb...firebasedatabase.app"></div>
+            <div class="config-field"><label>Project ID</label><input type="text" id="cfg-projectId" placeholder="your-project-id"></div>
+            <div class="config-field"><label>Storage Bucket</label><input type="text" id="cfg-storageBucket" placeholder="your-app.appspot.com"></div>
+            <div class="config-field"><label>App ID</label><input type="text" id="cfg-appId" placeholder="1:123456:web:abc..."></div>
+          </div>
+          <button class="btn-connect" onclick="connectFirebase()">連線 Firebase</button>
+          <div class="config-note">設定會儲存在本機 localStorage。Firebase 建立後，在專案設定 → 你的應用程式裡找到這些值。</div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getDatabase, ref, push, onValue, query, orderByChild, limitToLast } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+window._firebase = { initializeApp, getDatabase, ref, push, onValue, query, orderByChild, limitToLast };
+window.dispatchEvent(new Event('firebase-sdk-ready'));
+</script>
+
+<script>
+// ── STATE ──
+let nodes = [];
+let activeFilter = null;
+let activeQTags = new Set();
+let pendingNodes = [];
+let detectedUrl = null;
+let db = null;
+let firebaseReady = false;
+
+// ── FIREBASE ──
+window.addEventListener('firebase-sdk-ready', () => {
+  firebaseReady = true;
+  const saved = loadConfig();
+  if (saved && saved.apiKey) {
+    connectFirebaseWithConfig(saved);
+  }
+});
+
+function loadConfig() {
+  try { return JSON.parse(localStorage.getItem('insight-os-config') || 'null'); }
+  catch { return null; }
+}
+
+function connectFirebase() {
+  const cfg = {
+    apiKey: document.getElementById('cfg-apiKey').value.trim(),
+    authDomain: document.getElementById('cfg-authDomain').value.trim(),
+    databaseURL: document.getElementById('cfg-databaseURL').value.trim(),
+    projectId: document.getElementById('cfg-projectId').value.trim(),
+    storageBucket: document.getElementById('cfg-storageBucket').value.trim(),
+    appId: document.getElementById('cfg-appId').value.trim(),
+  };
+  if (!cfg.apiKey || !cfg.databaseURL) { showToast('請填入 API Key 和 Database URL'); return; }
+  localStorage.setItem('insight-os-config', JSON.stringify(cfg));
+  connectFirebaseWithConfig(cfg);
+}
+
+function connectFirebaseWithConfig(cfg) {
+  if (!firebaseReady) { setTimeout(() => connectFirebaseWithConfig(cfg), 200); return; }
+  try {
+    const { initializeApp, getDatabase, ref, onValue, query, orderByChild } = window._firebase;
+    const app = initializeApp(cfg, 'insight-os-' + Date.now());
+    db = getDatabase(app);
+    window._db = db;
+    window._ref = ref;
+    window._push = window._firebase.push;
+
+    // Update status
+    document.getElementById('statusDot').classList.add('connected');
+    document.getElementById('statusText').textContent = '已連線';
+
+    // Load nodes from Firebase
+    const nodesRef = ref(db, 'cmc_nodes');
+    onValue(nodesRef, snap => {
+      const data = snap.val();
+      if (data) {
+        nodes = Object.entries(data).map(([id, v]) => ({ ...v, firebaseId: id }));
+        nodes.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+      } else {
+        nodes = [];
+      }
+      renderAll();
+    });
+    showToast('Firebase 連線成功 ✓');
+  } catch(e) {
+    showToast('連線失敗：' + e.message);
+  }
+}
+
+async function saveToFirebase(node) {
+  if (!db) return false;
+  try {
+    const { ref, push } = window._firebase;
+    const nodesRef = ref(db, 'cmc_nodes');
+    await push(nodesRef, node);
+    return true;
+  } catch(e) {
+    console.error('Firebase save error:', e);
+    return false;
+  }
+}
+
+// ── URL DETECTION ──
+function extractUrl(text) {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const matches = text.match(urlRegex);
+  return matches ? matches[0] : null;
+}
+
+function handleInput(el) {
+  // Auto resize
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+
+  // URL detection
+  const text = el.value;
+  const url = extractUrl(text);
+  const preview = document.getElementById('urlPreview');
+  const previewText = document.getElementById('urlPreviewText');
+
+  if (url && url !== detectedUrl) {
+    detectedUrl = url;
+    previewText.textContent = url;
+    preview.classList.add('visible');
+  } else if (!url) {
+    detectedUrl = null;
+    preview.classList.remove('visible');
+  }
+}
+
+function clearUrl() {
+  detectedUrl = null;
+  document.getElementById('urlPreview').classList.remove('visible');
+  // Remove URL from input
+  const input = document.getElementById('captureInput');
+  input.value = input.value.replace(/(https?:\/\/[^\s]+)/g, '').trim();
+}
+
+// ── EXTRACTION ──
+function handleKeyDown(e) {
+  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); runExtraction(); }
+}
+
+async function runExtraction() {
+  const rawInput = document.getElementById('captureInput').value.trim();
+  if (!rawInput) return;
+
+  const btn = document.getElementById('extractBtn');
+  const panel = document.getElementById('extractionPanel');
+  const header = document.getElementById('extractionHeader');
+  const preview = document.getElementById('nodesPreview');
+  const saveBtn = document.getElementById('saveAllBtn');
+
+  btn.textContent = '萃取中…'; btn.classList.add('loading');
+  panel.classList.add('visible');
+  header.innerHTML = `<div class="pulse-dot"></div><span class="loading-dots">萃取中<span>.</span><span>.</span><span>.</span></span>`;
+  preview.innerHTML = ''; saveBtn.style.display = 'none'; pendingNodes = [];
+
+  // Clean input (remove URL for cleaner text)
+  const textOnly = rawInput.replace(/(https?:\/\/[^\s]+)/g, '').trim();
+  const tagsHint = activeQTags.size > 0 ? `用戶預設標籤：${[...activeQTags].join(', ')}。` : '';
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: `你是 Vivian 的個人 AI 洞察節點萃取器。Vivian 是生技公司的 CMC Executive Director，同時在建立 Fire by Design 個人品牌（biotech insider mentor + body management systems educator）。
+
+從輸入中萃取 2-4 個關鍵節點。每個節點：
+- title：繁體中文，20字以內，精準描述核心概念
+- excerpt：一句話說明，40字以內，具體可操作
+- tags：陣列，可包含 "tool"（工具/平台）、"concept"（概念/框架）、"apply"（立即可應用）
+- track："cmc"（CMC法規/知識工作）、"fire"（內容創作/個人品牌）、"both"
+
+${tagsHint}
+優先萃取行動導向的洞察，而不只是摘要。
+只回傳 JSON 陣列，不含任何其他文字或 markdown。
+格式：[{"title":"...","excerpt":"...","tags":["concept"],"track":"both"}]`,
+        messages: [{ role: 'user', content: textOnly || rawInput }]
+      })
+    });
+
+    const data = await res.json();
+    const text = data.content?.find(c => c.type === 'text')?.text || '[]';
+    let extracted;
+    try { extracted = JSON.parse(text.replace(/```json?|```/g, '').trim()); }
+    catch { extracted = fallback(rawInput); }
+
+    header.innerHTML = `<span style="color:var(--a);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;animation:none">萃取完成 — ${extracted.length} 個節點</span>`;
+
+    const now = new Date().toISOString();
+    pendingNodes = extracted.map((n, i) => ({
+      ...n,
+      id: Date.now() + i,
+      sourceLabel: detectedUrl ? new URL(detectedUrl).hostname : '手動輸入',
+      sourceUrl: detectedUrl || '',
+      createdAt: now,
+      rawInput: rawInput,
+      imageUrl: '',
+      connections: 0
+    }));
+
+    pendingNodes.forEach((n, i) => {
+      const chip = document.createElement('div');
+      chip.className = 'node-chip';
+      chip.style.animationDelay = i * 0.1 + 's';
+      chip.innerHTML = `${n.tags.map(t => `<span class="chip-type type-${t}">${tagLabel(t)}</span>`).join('')}<span style="font-size:11px">${n.title}</span>`;
+      preview.appendChild(chip);
+    });
+    saveBtn.style.display = 'inline-block';
+
+  } catch(err) {
+    pendingNodes = fallback(rawInput).map((n, i) => ({
+      ...n,
+      id: Date.now() + i,
+      sourceLabel: detectedUrl ? new URL(detectedUrl).hostname : '手動輸入',
+      sourceUrl: detectedUrl || '',
+      createdAt: new Date().toISOString(),
+      rawInput: rawInput,
+      imageUrl: '',
+      connections: 0
+    }));
+    header.innerHTML = `<span style="font-size:9px;letter-spacing:0.1em;color:var(--d);animation:none">離線模式</span>`;
+    pendingNodes.forEach(n => {
+      const chip = document.createElement('div');
+      chip.className = 'node-chip';
+      chip.innerHTML = `<span class="chip-type type-concept">概念</span><span style="font-size:11px">${n.title}</span>`;
+      preview.appendChild(chip);
+    });
+    saveBtn.style.display = 'inline-block';
+  }
+
+  btn.textContent = '↳ 萃取節點'; btn.classList.remove('loading');
+}
+
+function fallback(input) {
+  const t = input.replace(/(https?:\/\/[^\s]+)/g, '').trim().slice(0, 60).replace(/\n/g, ' ');
+  return [{ title: t.length > 50 ? t.slice(0, 50) + '…' : t, excerpt: '手動輸入節點。', tags: [...(activeQTags.size ? activeQTags : ['concept'])], track: activeQTags.has('cmc') ? 'cmc' : activeQTags.has('fire') ? 'fire' : 'both' }];
+}
+
+async function saveAllNodes() {
+  const saved = [];
+  for (const node of pendingNodes) {
+    if (db) {
+      const ok = await saveToFirebase(node);
+      if (!ok) nodes.unshift(node); // fallback to local if Firebase fails
+    } else {
+      nodes.unshift(node);
+    }
+  }
+
+  document.getElementById('captureInput').value = '';
+  document.getElementById('captureInput').style.height = 'auto';
+  document.getElementById('extractionPanel').classList.remove('visible');
+  document.getElementById('urlPreview').classList.remove('visible');
+  detectedUrl = null;
+  activeQTags.clear();
+  ['tool','concept','apply','cmc','fire'].forEach(t => { document.getElementById(`qt-${t}`).className = 'qtag'; });
+  pendingNodes = [];
+
+  if (!db) renderAll();
+  showToast('節點已儲存 ✓');
+}
+
+// ── WEEKLY SUMMARY ──
+async function runWeeklySummary() {
+  if (nodes.length === 0) { showToast('節點庫是空的'); return; }
+  const week = nodes.slice(0, 20);
+  const summaryText = week.map(n => `・${n.title}：${n.excerpt}`).join('\n');
+
+  showToast('產生週摘要中…');
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 800,
+        system: `你是 Vivian 的個人知識助理。她是 CMC Executive Director，同時在建立 Fire by Design 個人品牌。根據她最近的洞察節點，產出一份簡潔的週摘要，包含：
+1. 這週最值得深化的 2-3 個方向
+2. 可直接應用在 CMC 工作的洞察（1-2 條）
+3. 可用在 Fire by Design 內容的素材（1-2 條）
+用繁體中文，條列式，簡潔有力。`,
+        messages: [{ role: 'user', content: `最近的洞察節點：\n${summaryText}` }]
+      })
+    });
+    const data = await res.json();
+    const summary = data.content?.find(c => c.type === 'text')?.text || '無法產生摘要';
+
+    // Save summary as a special node
+    const summaryNode = {
+      title: `週摘要 ${new Date().toLocaleDateString('zh-TW')}`,
+      excerpt: summary.slice(0, 80) + '…',
+      tags: ['concept'],
+      track: 'both',
+      sourceLabel: 'Insight OS 週摘要',
+      sourceUrl: '',
+      createdAt: new Date().toISOString(),
+      rawInput: summary,
+      imageUrl: '',
+      connections: 0,
+      isSummary: true
+    };
+
+    if (db) { await saveToFirebase(summaryNode); }
+    else { nodes.unshift(summaryNode); renderAll(); }
+    showToast('週摘要已產生並儲存 ✓');
+  } catch(e) {
+    showToast('週摘要產生失敗');
+  }
+}
+
+// ── RENDER ──
+function renderAll() {
+  updateStats();
+  renderNodes();
+  updateSidebarCounts();
+}
+
+function updateStats() {
+  document.getElementById('stat-total').textContent = nodes.length;
+  document.getElementById('stat-cmc').textContent = nodes.filter(n => n.track === 'cmc' || n.track === 'both').length;
+  document.getElementById('stat-fire').textContent = nodes.filter(n => n.track === 'fire' || n.track === 'both').length;
+  document.getElementById('stat-apply').textContent = nodes.filter(n => n.tags && n.tags.includes('apply')).length;
+}
+
+function updateSidebarCounts() {
+  document.getElementById('count-cmc').textContent = nodes.filter(n => n.track === 'cmc' || n.track === 'both').length;
+  document.getElementById('count-fire').textContent = nodes.filter(n => n.track === 'fire' || n.track === 'both').length;
+}
+
+function tagLabel(t) {
+  return { tool: '工具', concept: '概念', apply: '可應用', cmc: 'CMC', fire: 'Fire' }[t] || t;
+}
+
+function renderNodes(list) {
+  const grid = document.getElementById('nodesGrid');
+  const empty = document.getElementById('emptyState');
+  let filtered = list || nodes;
+  if (activeFilter) filtered = filtered.filter(n => n.tags && n.tags.includes(activeFilter));
+
+  if (!filtered.length) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    grid.appendChild(empty);
+    return;
+  }
+  empty.style.display = 'none';
+
+  grid.innerHTML = filtered.map((n, i) => {
+    const sourceHtml = n.sourceUrl
+      ? `<a class="card-source-link" href="${n.sourceUrl}" target="_blank" rel="noopener">${n.sourceLabel || n.sourceUrl}</a>`
+      : `<span class="card-source-text">${n.sourceLabel || '手動輸入'}</span>`;
+    const dateStr = n.createdAt ? n.createdAt.slice(0, 10) : '';
+    const trackTags = n.track === 'both'
+      ? `<span class="card-tag tag-cmc">CMC</span><span class="card-tag tag-fire">Fire</span>`
+      : `<span class="card-tag tag-${n.track}">${n.track === 'cmc' ? 'CMC' : 'Fire'}</span>`;
+    const tags = (n.tags || []).map(t => `<span class="card-tag tag-${t}">${tagLabel(t)}</span>`).join('');
+    return `
+      <div class="node-card track-${n.track}" style="animation-delay:${i * 0.04}s">
+        <div class="card-tags">${tags}${trackTags}</div>
+        <div class="card-title">${n.title}</div>
+        <div class="card-excerpt">${n.excerpt}</div>
+        <div class="card-footer">${sourceHtml}<span class="card-date">${dateStr}</span></div>
+      </div>`;
+  }).join('');
+}
+
+// ── FILTERS ──
+function filterByType(type) {
+  activeFilter = type;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(type ? `filter-${type}` : 'filter-all')?.classList.add('active');
+  renderNodes();
+}
+
+function filterByTrack(track) {
+  renderNodes(nodes.filter(n => n.track === track || n.track === 'both'));
+}
+
+function toggleQTag(tag) {
+  const el = document.getElementById(`qt-${tag}`);
+  if (activeQTags.has(tag)) { activeQTags.delete(tag); el.className = 'qtag'; }
+  else { activeQTags.add(tag); el.className = `qtag a-${tag}`; }
+}
+
+// ── VIEW SWITCH ──
+function switchView(view, el) {
+  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('libraryView').style.display = view === 'library' ? 'block' : 'none';
+  document.getElementById('flowView').style.display = view === 'flow' ? 'block' : 'none';
+  document.getElementById('settingsView').style.display = view === 'settings' ? 'block' : 'none';
+
+  // Pre-fill settings if saved
+  if (view === 'settings') {
+    const cfg = loadConfig();
+    if (cfg) {
+      ['apiKey','authDomain','databaseURL','projectId','storageBucket','appId'].forEach(k => {
+        const el = document.getElementById('cfg-' + k);
+        if (el && cfg[k]) el.value = cfg[k];
+      });
+    }
+  }
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── INIT ──
+window.onload = () => { renderAll(); };
+</script>
+</body>
+</html>
