@@ -6,28 +6,10 @@
 <title>Insight OS</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #edf0f5;
-  --surface: #f6f8fb;
-  --surface2: #ffffff;
-  --border: rgba(90,110,150,0.11);
-  --border-mid: rgba(90,110,150,0.2);
-  --text: #28304a;
-  --text-mid: #5a6480;
-  --text-dim: #96a0b8;
-  --a: #4a7fc1;
-  --b: #c17a4a;
-  --c: #6a7fc1;
-  --d: #b84a6a;
-  --ga: rgba(74,127,193,0.08);
-  --gb: rgba(193,122,74,0.08);
-  --gc: rgba(106,127,193,0.08);
-}
+:root{--bg:#edf0f5;--surface:#f6f8fb;--surface2:#ffffff;--border:rgba(90,110,150,0.11);--border-mid:rgba(90,110,150,0.2);--text:#28304a;--text-mid:#5a6480;--text-dim:#96a0b8;--a:#4a7fc1;--b:#c17a4a;--c:#6a7fc1;--d:#b84a6a;--ga:rgba(74,127,193,0.08);--gb:rgba(193,122,74,0.08);--gc:rgba(106,127,193,0.08);}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-serif;font-weight:300;min-height:100vh;}
 .shell{display:grid;grid-template-columns:210px 1fr;grid-template-rows:50px 1fr;min-height:100vh;}
-
-/* TOPBAR */
 .topbar{grid-column:1/-1;display:flex;align-items:center;padding:0 22px;gap:14px;background:var(--surface2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
 .logo{font-family:'DM Serif Display',serif;font-size:16px;letter-spacing:0.03em;color:var(--text);}
 .logo span{color:var(--a);}
@@ -36,8 +18,6 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 .firebase-status{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text-dim);}
 .status-dot{width:6px;height:6px;border-radius:50%;background:var(--text-dim);}
 .status-dot.connected{background:#4caf7d;}
-
-/* SIDEBAR */
 .sidebar{background:var(--surface2);border-right:1px solid var(--border);padding:18px 0;overflow-y:auto;}
 .sidebar-label{font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-dim);padding:0 16px 6px;}
 .sidebar-section{margin-bottom:22px;}
@@ -51,11 +31,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 .track-pill.cmc{border-left:3px solid var(--a);}
 .track-pill.fire{border-left:3px solid var(--b);}
 .track-count{font-size:10px;color:var(--text-dim);background:var(--bg);padding:1px 7px;border-radius:10px;}
-
-/* MAIN */
 .main{display:flex;flex-direction:column;overflow:hidden;}
-
-/* CAPTURE */
 .capture-zone{background:var(--surface2);border-bottom:1px solid var(--border);padding:15px 22px 11px;}
 .capture-label{font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-dim);margin-bottom:7px;display:flex;align-items:center;gap:7px;}
 .capture-label::after{content:'最小摩擦力';color:var(--a);font-size:8px;border:1px solid rgba(74,127,193,0.3);padding:1px 5px;border-radius:3px;}
@@ -63,15 +39,12 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 .capture-input{flex:1;background:var(--bg);border:1px solid var(--border-mid);border-radius:8px;padding:10px 13px;color:var(--text);font-family:inherit;font-size:12px;font-weight:300;resize:none;min-height:42px;max-height:120px;overflow-y:auto;transition:border-color 0.2s,box-shadow 0.2s;line-height:1.6;}
 .capture-input:focus{outline:none;border-color:var(--a);box-shadow:0 0 0 3px rgba(74,127,193,0.1);}
 .capture-input::placeholder{color:var(--text-dim);}
-
-/* URL preview strip */
 .url-preview{display:none;align-items:center;gap:7px;margin-top:7px;padding:6px 10px;background:var(--gc);border:1px solid rgba(106,127,193,0.2);border-radius:6px;font-size:10px;color:var(--c);}
 .url-preview.visible{display:flex;}
 .url-preview-label{font-size:9px;letter-spacing:0.08em;text-transform:uppercase;opacity:0.7;flex-shrink:0;}
 .url-preview-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;}
 .url-remove{cursor:pointer;opacity:0.5;flex-shrink:0;font-size:14px;line-height:1;}
 .url-remove:hover{opacity:1;}
-
 .capture-actions{display:flex;flex-direction:column;gap:5px;}
 .btn-extract{background:var(--a);color:#fff;border:none;border-radius:7px;padding:10px 16px;font-size:11px;font-weight:500;letter-spacing:0.04em;cursor:pointer;white-space:nowrap;transition:all 0.15s;}
 .btn-extract:hover{opacity:0.88;transform:translateY(-1px);}
@@ -84,8 +57,11 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 .qtag.a-apply{border-color:var(--d);color:var(--d);background:rgba(184,74,106,0.06);}
 .qtag.a-cmc{border-color:var(--a);color:var(--a);background:var(--ga);}
 .qtag.a-fire{border-color:var(--b);color:var(--b);background:var(--gb);}
-
-/* EXTRACTION PANEL */
+.qtag-custom{font-size:10px;padding:2px 9px;border-radius:20px;border:1px solid var(--border-mid);color:var(--text-mid);cursor:pointer;transition:all 0.12s;}
+.qtag-custom:hover{color:var(--text);}
+.qtag-custom.active{border-color:var(--c);color:var(--c);background:var(--gc);}
+.qtag-add{font-size:10px;padding:2px 7px;border-radius:20px;border:1px dashed var(--border-mid);color:var(--text-dim);cursor:pointer;transition:all 0.12s;background:none;}
+.qtag-add:hover{border-color:var(--a);color:var(--a);}
 .extraction-panel{background:#f0f4fb;border-bottom:1px solid var(--border);padding:12px 22px;display:none;}
 .extraction-panel.visible{display:block;animation:slideDown 0.2s ease;}
 @keyframes slideDown{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
@@ -101,8 +77,6 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 .type-apply{background:rgba(184,74,106,0.1);color:var(--d);}
 .btn-save-all{margin-top:9px;background:transparent;border:1px solid var(--a);color:var(--a);border-radius:6px;padding:6px 14px;font-size:11px;cursor:pointer;transition:all 0.15s;letter-spacing:0.04em;}
 .btn-save-all:hover{background:var(--ga);}
-
-/* CONTENT AREA */
 .content-area{flex:1;overflow-y:auto;padding:18px 22px;}
 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;}
 .stat-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 15px;position:relative;overflow:hidden;transition:border-color 0.15s,box-shadow 0.15s;}
@@ -124,8 +98,6 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 .filter-btn{font-size:10px;padding:3px 10px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text-dim);cursor:pointer;transition:all 0.12s;}
 .filter-btn:hover{border-color:var(--border-mid);color:var(--text-mid);}
 .filter-btn.active{border-color:var(--a);color:var(--a);background:var(--ga);}
-
-/* NODE CARDS */
 .nodes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:11px;}
 .node-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:15px;cursor:pointer;transition:all 0.15s;position:relative;overflow:hidden;animation:cardIn 0.3s ease both;}
 .node-card:hover{border-color:var(--border-mid);transform:translateY(-2px);box-shadow:0 6px 20px rgba(74,100,160,0.07);}
@@ -140,6 +112,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 .tag-apply{background:rgba(184,74,106,0.08);color:var(--d);border:1px solid rgba(184,74,106,0.15);}
 .tag-cmc{background:rgba(74,127,193,0.08);color:var(--a);border:1px solid rgba(74,127,193,0.15);}
 .tag-fire{background:rgba(193,122,74,0.08);color:var(--b);border:1px solid rgba(193,122,74,0.15);}
+.tag-custom{background:rgba(106,127,193,0.06);color:var(--c);border:1px solid rgba(106,127,193,0.15);}
 .card-title{font-size:12px;font-weight:400;color:var(--text);line-height:1.55;margin-bottom:7px;}
 .card-excerpt{font-size:11px;color:var(--text-mid);line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
 .card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:11px;padding-top:9px;border-top:1px solid var(--border);gap:6px;}
@@ -147,13 +120,41 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 .card-source-link:hover{text-decoration:underline;}
 .card-source-text{font-size:9px;color:var(--text-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px;}
 .card-date{font-size:9px;color:var(--text-dim);flex-shrink:0;}
-
-/* EMPTY STATE */
 .empty-state{text-align:center;padding:48px 24px;color:var(--text-dim);}
 .empty-icon{font-size:28px;margin-bottom:10px;opacity:0.2;}
 .empty-text{font-size:12px;line-height:1.7;}
-
-/* FLOW VIEW */
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(40,48,74,0.32);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn 0.15s ease;}
+.modal-box{background:var(--surface2);border:1px solid var(--border-mid);border-radius:14px;width:100%;max-width:580px;max-height:85vh;overflow-y:auto;padding:24px;position:relative;animation:slideUp 0.2s ease;}
+@keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.modal-close{position:absolute;top:14px;right:16px;background:none;border:none;cursor:pointer;font-size:20px;color:var(--text-dim);line-height:1;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:50%;}
+.modal-close:hover{background:var(--bg);color:var(--text);}
+.modal-section{margin-bottom:16px;}
+.modal-field-label{font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-dim);margin-bottom:5px;}
+.modal-input{width:100%;background:var(--bg);border:1px solid var(--border-mid);border-radius:7px;padding:8px 11px;font-size:12px;color:var(--text);font-family:inherit;transition:border-color 0.15s;}
+.modal-input:focus{outline:none;border-color:var(--a);}
+.modal-textarea{width:100%;background:var(--bg);border:1px solid var(--border-mid);border-radius:7px;padding:8px 11px;font-size:12px;color:var(--text);font-family:inherit;resize:vertical;min-height:60px;line-height:1.6;transition:border-color 0.15s;}
+.modal-textarea:focus{outline:none;border-color:var(--a);}
+.modal-raw-box{background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:10px 11px;font-size:11px;color:var(--text-mid);line-height:1.7;white-space:pre-wrap;word-break:break-word;max-height:160px;overflow-y:auto;}
+.tag-toggles{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;}
+.tag-toggle{font-size:10px;padding:3px 10px;border-radius:20px;border:1px solid var(--border-mid);color:var(--text-dim);cursor:pointer;transition:all 0.12s;background:none;}
+.tag-toggle:hover{border-color:var(--border-mid);color:var(--text);}
+.tag-toggle.on-tool,.tag-toggle.on-concept{border-color:var(--c);color:var(--c);background:var(--gc);}
+.tag-toggle.on-apply{border-color:var(--d);color:var(--d);background:rgba(184,74,106,0.06);}
+.tag-toggle.on-custom{border-color:var(--c);color:var(--c);background:var(--gc);}
+.track-toggles{display:flex;gap:6px;margin-top:4px;}
+.track-toggle{font-size:10px;padding:4px 14px;border-radius:20px;border:1px solid var(--border-mid);color:var(--text-dim);cursor:pointer;transition:all 0.12s;background:none;}
+.track-toggle.on-cmc{border-color:var(--a);color:var(--a);background:var(--ga);}
+.track-toggle.on-fire{border-color:var(--b);color:var(--b);background:var(--gb);}
+.track-toggle.on-both{border-color:var(--c);color:var(--c);background:var(--gc);}
+.modal-footer{display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid var(--border);margin-top:6px;gap:8px;}
+.modal-source-link{font-size:10px;color:var(--a);text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px;flex:1;}
+.modal-source-link:hover{text-decoration:underline;}
+.btn-save-edit{background:var(--a);color:#fff;border:none;border-radius:7px;padding:7px 16px;font-size:11px;font-weight:500;cursor:pointer;transition:all 0.15s;letter-spacing:0.04em;}
+.btn-save-edit:hover{opacity:0.88;}
+.btn-delete{background:transparent;border:1px solid rgba(184,74,106,0.3);color:var(--d);border-radius:7px;padding:7px 14px;font-size:11px;cursor:pointer;transition:all 0.15s;}
+.btn-delete:hover{background:rgba(184,74,106,0.08);border-color:var(--d);}
+/* FLOW */
 .flow-diagram{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:22px;overflow-x:auto;margin-bottom:12px;}
 .flow-title{font-size:9px;letter-spacing:0.13em;text-transform:uppercase;color:var(--text-dim);margin-bottom:18px;}
 .flow-track{display:flex;align-items:center;margin-bottom:14px;min-width:600px;}
@@ -172,8 +173,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 .int-card{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:13px;}
 .int-label{font-size:9px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;}
 .int-body{font-size:11px;color:var(--text-mid);line-height:1.7;}
-
-/* FIREBASE CONFIG PANEL */
+/* CONFIG */
 .config-panel{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:16px;}
 .config-title{font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-dim);margin-bottom:14px;}
 .config-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
@@ -183,9 +183,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 .btn-connect{background:var(--a);color:#fff;border:none;border-radius:7px;padding:9px 18px;font-size:11px;font-weight:500;cursor:pointer;margin-top:12px;transition:all 0.15s;letter-spacing:0.04em;}
 .btn-connect:hover{opacity:0.88;}
 .config-note{font-size:10px;color:var(--text-dim);margin-top:10px;line-height:1.6;}
-
-/* TOAST */
-.toast{position:fixed;bottom:18px;right:18px;background:var(--surface2);border:1px solid var(--a);border-radius:8px;padding:10px 16px;font-size:11px;color:var(--a);opacity:0;transform:translateY(8px);transition:all 0.2s;z-index:1000;pointer-events:none;}
+.toast{position:fixed;bottom:18px;right:18px;background:var(--surface2);border:1px solid var(--a);border-radius:8px;padding:10px 16px;font-size:11px;color:var(--a);opacity:0;transform:translateY(8px);transition:all 0.2s;z-index:300;pointer-events:none;}
 .toast.show{opacity:1;transform:translateY(0);}
 .loading-dots span{animation:blink 1.2s infinite;opacity:0;}
 .loading-dots span:nth-child(2){animation-delay:0.2s;}
@@ -199,93 +197,58 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 </head>
 <body>
 <div class="shell">
-
-  <!-- TOPBAR -->
   <header class="topbar">
     <div class="logo">Insight <span>OS</span></div>
     <span class="topbar-sep"></span>
-    <div class="firebase-status">
-      <div class="status-dot" id="statusDot"></div>
-      <span id="statusText">未連線</span>
-    </div>
+    <div class="firebase-status"><div class="status-dot" id="statusDot"></div><span id="statusText">未連線</span></div>
     <div class="topbar-tag">v1.0</div>
   </header>
-
-  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sidebar-section">
       <div class="sidebar-label">視圖</div>
-      <div class="nav-item active" onclick="switchView('library',this)">
-        <span class="nav-dot" style="background:var(--a)"></span>節點庫
-      </div>
-      <div class="nav-item" onclick="switchView('flow',this)">
-        <span class="nav-dot" style="background:var(--c)"></span>工作流程圖
-      </div>
-      <div class="nav-item" onclick="switchView('settings',this)">
-        <span class="nav-dot" style="background:var(--text-dim)"></span>Firebase 設定
-      </div>
+      <div class="nav-item active" onclick="switchView('library',this)"><span class="nav-dot" style="background:var(--a)"></span>節點庫</div>
+      <div class="nav-item" onclick="switchView('flow',this)"><span class="nav-dot" style="background:var(--c)"></span>工作流程圖</div>
+      <div class="nav-item" onclick="switchView('settings',this)"><span class="nav-dot" style="background:var(--text-dim)"></span>Firebase 設定</div>
     </div>
     <div class="sidebar-section">
       <div class="sidebar-label">Track</div>
       <div class="track-pills">
-        <div class="track-pill cmc" onclick="filterByTrack('cmc')">
-          <span>CMC 知識工作</span>
-          <span class="track-count" id="count-cmc">0</span>
-        </div>
-        <div class="track-pill fire" onclick="filterByTrack('fire')">
-          <span>Fire by Design</span>
-          <span class="track-count" id="count-fire">0</span>
-        </div>
+        <div class="track-pill cmc" onclick="filterByTrack('cmc')"><span>CMC 知識工作</span><span class="track-count" id="count-cmc">0</span></div>
+        <div class="track-pill fire" onclick="filterByTrack('fire')"><span>Fire by Design</span><span class="track-count" id="count-fire">0</span></div>
       </div>
     </div>
     <div class="sidebar-section">
       <div class="sidebar-label">類型</div>
-      <div class="nav-item" onclick="filterByType('tool')">
-        <span class="nav-dot" style="background:var(--c)"></span>工具類
-      </div>
-      <div class="nav-item" onclick="filterByType('concept')">
-        <span class="nav-dot" style="background:var(--c);opacity:0.5"></span>概念類
-      </div>
-      <div class="nav-item" onclick="filterByType('apply')">
-        <span class="nav-dot" style="background:var(--d)"></span>可應用
-      </div>
-      <div class="nav-item" onclick="filterByType(null)">
-        <span class="nav-dot" style="background:var(--text-dim)"></span>全部顯示
-      </div>
+      <div class="nav-item" onclick="filterByType('tool')"><span class="nav-dot" style="background:var(--c)"></span>工具類</div>
+      <div class="nav-item" onclick="filterByType('concept')"><span class="nav-dot" style="background:var(--c);opacity:0.5"></span>概念類</div>
+      <div class="nav-item" onclick="filterByType('apply')"><span class="nav-dot" style="background:var(--d)"></span>可應用</div>
+      <div class="nav-item" onclick="filterByType(null)"><span class="nav-dot" style="background:var(--text-dim)"></span>全部顯示</div>
     </div>
     <div class="sidebar-section">
       <div class="sidebar-label">摘要</div>
-      <div class="nav-item" onclick="runWeeklySummary()">
-        <span class="nav-dot" style="background:var(--b)"></span>產生週摘要
-      </div>
+      <div class="nav-item" onclick="runWeeklySummary()"><span class="nav-dot" style="background:var(--b)"></span>產生週摘要</div>
     </div>
   </aside>
-
-  <!-- MAIN -->
   <main class="main">
-
-    <!-- CAPTURE ZONE -->
     <div class="capture-zone">
       <div class="capture-label">快速收錄</div>
       <div class="capture-row">
         <div style="flex:1">
-          <textarea class="capture-input" id="captureInput"
-            placeholder="貼入文章摘要、URL、想法片段……URL 會自動偵測。按 Ctrl+Enter 萃取"
-            rows="2"
-            onkeydown="handleKeyDown(event)"
-            oninput="handleInput(this)"></textarea>
+          <textarea class="capture-input" id="captureInput" placeholder="貼入文章摘要、URL、想法片段……URL 會自動偵測。按 Ctrl+Enter 萃取" rows="2" onkeydown="handleKeyDown(event)" oninput="handleInput(this)"></textarea>
           <div class="url-preview" id="urlPreview">
             <span class="url-preview-label">來源 URL</span>
             <span class="url-preview-text" id="urlPreviewText"></span>
-            <span class="url-remove" onclick="clearUrl()" title="移除 URL">×</span>
+            <span class="url-remove" onclick="clearUrl()">×</span>
           </div>
-          <div class="quick-tags">
+          <div class="quick-tags" id="quickTagsRow">
             <span class="quick-tags-label">快速標記</span>
             <span class="qtag" id="qt-tool" onclick="toggleQTag('tool')">工具</span>
             <span class="qtag" id="qt-concept" onclick="toggleQTag('concept')">概念</span>
             <span class="qtag" id="qt-apply" onclick="toggleQTag('apply')">可應用</span>
             <span class="qtag" id="qt-cmc" onclick="toggleQTag('cmc')">CMC</span>
             <span class="qtag" id="qt-fire" onclick="toggleQTag('fire')">Fire</span>
+            <span id="customTagsInline"></span>
+            <button class="qtag-add" onclick="addCustomTag()" title="新增自訂標記">＋</button>
           </div>
         </div>
         <div class="capture-actions">
@@ -293,21 +256,12 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
         </div>
       </div>
     </div>
-
-    <!-- EXTRACTION PANEL -->
     <div class="extraction-panel" id="extractionPanel">
-      <div class="extraction-header" id="extractionHeader">
-        <div class="pulse-dot"></div>
-        <span class="loading-dots">萃取中<span>.</span><span>.</span><span>.</span></span>
-      </div>
+      <div class="extraction-header" id="extractionHeader"><div class="pulse-dot"></div><span class="loading-dots">萃取中<span>.</span><span>.</span><span>.</span></span></div>
       <div class="nodes-preview" id="nodesPreview"></div>
       <button class="btn-save-all" id="saveAllBtn" onclick="saveAllNodes()" style="display:none">＋ 全部加入節點庫</button>
     </div>
-
-    <!-- CONTENT AREA -->
     <div class="content-area" id="contentArea">
-
-      <!-- LIBRARY VIEW -->
       <div id="libraryView">
         <div class="stats-row">
           <div class="stat-card s-total"><div class="stat-num" id="stat-total">0</div><div class="stat-label">總節點數</div></div>
@@ -324,16 +278,12 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
             <button class="filter-btn" id="filter-apply" onclick="filterByType('apply')">可應用</button>
           </div>
         </div>
-        <div class="nodes-grid" id="nodesGrid">
-          <div class="empty-state"><div class="empty-icon">◎</div><div class="empty-text">尚無節點<br>貼入任何內容，按「萃取節點」開始</div></div>
-        </div>
+        <div class="nodes-grid" id="nodesGrid"></div>
       </div>
-
-      <!-- FLOW VIEW -->
       <div id="flowView" style="display:none">
         <div class="flow-diagram">
           <div class="flow-title">工作流程架構</div>
-          <div style="font-size:9px;color:var(--text-dim);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:8px">輸入層 — 最小摩擦力</div>
+          <div style="font-size:9px;color:var(--text-dim);letter-spacing:0.09em;text-transform:uppercase;margin-bottom:8px">輸入層</div>
           <div class="flow-track">
             <div class="flow-node"><div class="flow-box input-box">貼入任意內容</div><div class="flow-sub">URL 自動偵測</div></div>
             <div class="flow-connector"><div class="flow-line"></div><div class="flow-arr"></div></div>
@@ -343,7 +293,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
             <div class="flow-connector"><div class="flow-line"></div><div class="flow-arr"></div></div>
             <div class="flow-node"><div class="flow-box out-both">Firebase 節點庫</div><div class="flow-sub">線上 / 跨裝置</div></div>
           </div>
-          <div style="font-size:9px;color:var(--text-dim);letter-spacing:0.09em;text-transform:uppercase;margin-top:14px;margin-bottom:8px">記憶層 — 不孤立</div>
+          <div style="font-size:9px;color:var(--text-dim);letter-spacing:0.09em;text-transform:uppercase;margin-top:14px;margin-bottom:8px">記憶層</div>
           <div class="flow-track">
             <div class="flow-node"><div class="flow-box out-both">節點庫</div></div>
             <div class="flow-connector"><div class="flow-line"></div><div class="flow-arr"></div></div>
@@ -355,23 +305,12 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
         <div class="flow-diagram">
           <div class="flow-title">三個方向整合地圖</div>
           <div class="int-grid">
-            <div class="int-card" style="border-top:2px solid var(--a)">
-              <div class="int-label" style="color:var(--a)">方向 A · CMC Memory</div>
-              <div class="int-body">GitHub repo<br>版本控制 / 決策記憶<br><span style="color:var(--a)">← export from 節點庫</span></div>
-            </div>
-            <div class="int-card" style="border-top:2px solid var(--c)">
-              <div class="int-label" style="color:var(--c)">方向 C · Insight OS</div>
-              <div class="int-body">本 App（樞紐）<br>Firebase 線上存儲<br><span style="color:var(--c)">↔ 橋接 A 和 B</span></div>
-            </div>
-            <div class="int-card" style="border-top:2px solid var(--b)">
-              <div class="int-label" style="color:var(--b)">方向 B · Heartbeat</div>
-              <div class="int-body">Notion database<br>週回顧 + 內容草稿<br><span style="color:var(--b)">→ Fire by Design</span></div>
-            </div>
+            <div class="int-card" style="border-top:2px solid var(--a)"><div class="int-label" style="color:var(--a)">方向 A · CMC Memory</div><div class="int-body">GitHub repo<br>版本控制 / 決策記憶<br><span style="color:var(--a)">← export from 節點庫</span></div></div>
+            <div class="int-card" style="border-top:2px solid var(--c)"><div class="int-label" style="color:var(--c)">方向 C · Insight OS</div><div class="int-body">本 App（樞紐）<br>Firebase 線上存儲<br><span style="color:var(--c)">↔ 橋接 A 和 B</span></div></div>
+            <div class="int-card" style="border-top:2px solid var(--b)"><div class="int-label" style="color:var(--b)">方向 B · Heartbeat</div><div class="int-body">Notion database<br>週回顧 + 內容草稿<br><span style="color:var(--b)">→ Fire by Design</span></div></div>
           </div>
         </div>
       </div>
-
-      <!-- SETTINGS VIEW -->
       <div id="settingsView" style="display:none">
         <div class="config-panel">
           <div class="config-title">Firebase 連線設定</div>
@@ -384,22 +323,53 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
             <div class="config-field"><label>App ID</label><input type="text" id="cfg-appId" placeholder="1:123456:web:abc..."></div>
           </div>
           <button class="btn-connect" onclick="connectFirebase()">連線 Firebase</button>
-          <div class="config-note">設定會儲存在本機 localStorage。Firebase 建立後，在專案設定 → 你的應用程式裡找到這些值。</div>
+          <div class="config-note">設定會儲存在本機 localStorage。</div>
         </div>
       </div>
-
     </div>
   </main>
 </div>
 
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" style="display:none" onclick="closeModalOverlay(event)">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModalDirect()">×</button>
+    <div class="modal-section">
+      <div class="modal-field-label">標題</div>
+      <input class="modal-input" id="modalTitle" type="text">
+    </div>
+    <div class="modal-section">
+      <div class="modal-field-label">摘要</div>
+      <textarea class="modal-textarea" id="modalExcerpt"></textarea>
+    </div>
+    <div class="modal-section">
+      <div class="modal-field-label">類型標籤</div>
+      <div class="tag-toggles" id="modalTagToggles"></div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-field-label">Track</div>
+      <div class="track-toggles" id="modalTrackToggles"></div>
+    </div>
+    <div class="modal-section" id="modalRawSection">
+      <div class="modal-field-label">原始內容</div>
+      <div class="modal-raw-box" id="modalRaw"></div>
+    </div>
+    <div class="modal-footer">
+      <a class="modal-source-link" id="modalSourceLink" href="#" target="_blank" rel="noopener"></a>
+      <div style="display:flex;gap:8px;flex-shrink:0">
+        <button class="btn-delete" onclick="deleteCurrentNode()">刪除</button>
+        <button class="btn-save-edit" onclick="saveEdit()">儲存修改</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
-<!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getDatabase, ref, push, onValue, query, orderByChild, limitToLast } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
-
-window._firebase = { initializeApp, getDatabase, ref, push, onValue, query, orderByChild, limitToLast };
+import { getDatabase, ref, push, onValue, remove, update } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+window._firebase = { initializeApp, getDatabase, ref, push, onValue, remove, update };
 window.dispatchEvent(new Event('firebase-sdk-ready'));
 </script>
 
@@ -412,19 +382,18 @@ let pendingNodes = [];
 let detectedUrl = null;
 let db = null;
 let firebaseReady = false;
+let currentNode = null;
+let customTags = JSON.parse(localStorage.getItem('insight-custom-tags') || '[]');
 
 // ── FIREBASE ──
 window.addEventListener('firebase-sdk-ready', () => {
   firebaseReady = true;
   const saved = loadConfig();
-  if (saved && saved.apiKey) {
-    connectFirebaseWithConfig(saved);
-  }
+  if (saved && saved.apiKey) connectFirebaseWithConfig(saved);
 });
 
 function loadConfig() {
-  try { return JSON.parse(localStorage.getItem('insight-os-config') || 'null'); }
-  catch { return null; }
+  try { return JSON.parse(localStorage.getItem('insight-os-config') || 'null'); } catch { return null; }
 }
 
 function connectFirebase() {
@@ -444,75 +413,70 @@ function connectFirebase() {
 function connectFirebaseWithConfig(cfg) {
   if (!firebaseReady) { setTimeout(() => connectFirebaseWithConfig(cfg), 200); return; }
   try {
-    const { initializeApp, getDatabase, ref, onValue, query, orderByChild } = window._firebase;
+    const { initializeApp, getDatabase, ref, onValue } = window._firebase;
     const app = initializeApp(cfg, 'insight-os-' + Date.now());
     db = getDatabase(app);
     window._db = db;
-    window._ref = ref;
-    window._push = window._firebase.push;
-
-    // Update status
     document.getElementById('statusDot').classList.add('connected');
     document.getElementById('statusText').textContent = '已連線';
-
-    // Load nodes from Firebase
     const nodesRef = ref(db, 'cmc_nodes');
     onValue(nodesRef, snap => {
       const data = snap.val();
       if (data) {
         nodes = Object.entries(data).map(([id, v]) => ({
-          ...v,
-          firebaseId: id,
-          // Firebase sometimes stores arrays as objects — normalize back
+          ...v, firebaseId: id,
           tags: Array.isArray(v.tags) ? v.tags : Object.values(v.tags || {}),
           track: v.track || 'both'
         }));
         nodes.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
-      } else {
-        nodes = [];
-      }
+      } else { nodes = []; }
       renderAll();
     });
     showToast('Firebase 連線成功 ✓');
-  } catch(e) {
-    showToast('連線失敗：' + e.message);
-  }
+  } catch(e) { showToast('連線失敗：' + e.message); }
 }
 
 async function saveToFirebase(node) {
   if (!db) return false;
   try {
     const { ref, push } = window._firebase;
-    const nodesRef = ref(db, 'cmc_nodes');
-    await push(nodesRef, node);
+    await push(ref(db, 'cmc_nodes'), node);
     return true;
-  } catch(e) {
-    console.error('Firebase save error:', e);
-    return false;
-  }
+  } catch(e) { return false; }
+}
+
+async function updateInFirebase(firebaseId, data) {
+  if (!db || !firebaseId) return false;
+  try {
+    const { ref, update } = window._firebase;
+    await update(ref(db, 'cmc_nodes/' + firebaseId), data);
+    return true;
+  } catch(e) { return false; }
+}
+
+async function deleteFromFirebase(firebaseId) {
+  if (!db || !firebaseId) return false;
+  try {
+    const { ref, remove } = window._firebase;
+    await remove(ref(db, 'cmc_nodes/' + firebaseId));
+    return true;
+  } catch(e) { return false; }
 }
 
 // ── URL DETECTION ──
 function extractUrl(text) {
-  const urlRegex = /(https?:\/\/[^\s]+)/g;
-  const matches = text.match(urlRegex);
-  return matches ? matches[0] : null;
+  const m = text.match(/(https?:\/\/[^\s]+)/);
+  return m ? m[0] : null;
 }
 
 function handleInput(el) {
-  // Auto resize
   el.style.height = 'auto';
   el.style.height = Math.min(el.scrollHeight, 120) + 'px';
-
-  // URL detection
-  const text = el.value;
-  const url = extractUrl(text);
+  const url = extractUrl(el.value);
   const preview = document.getElementById('urlPreview');
-  const previewText = document.getElementById('urlPreviewText');
-
   if (url && url !== detectedUrl) {
     detectedUrl = url;
-    previewText.textContent = url;
+    document.getElementById('urlPreviewText').textContent = url;
     preview.classList.add('visible');
   } else if (!url) {
     detectedUrl = null;
@@ -523,9 +487,35 @@ function handleInput(el) {
 function clearUrl() {
   detectedUrl = null;
   document.getElementById('urlPreview').classList.remove('visible');
-  // Remove URL from input
   const input = document.getElementById('captureInput');
   input.value = input.value.replace(/(https?:\/\/[^\s]+)/g, '').trim();
+}
+
+// ── CUSTOM TAGS ──
+function saveCustomTags() { localStorage.setItem('insight-custom-tags', JSON.stringify(customTags)); }
+
+function renderCustomTagsInline() {
+  const el = document.getElementById('customTagsInline');
+  el.innerHTML = customTags.map(t => `
+    <span class="qtag-custom ${activeQTags.has(t) ? 'active' : ''}" onclick="toggleCustomQTag('${t}')">${t}</span>
+  `).join('');
+}
+
+function toggleCustomQTag(tag) {
+  if (activeQTags.has(tag)) activeQTags.delete(tag);
+  else activeQTags.add(tag);
+  renderCustomTagsInline();
+}
+
+function addCustomTag() {
+  const name = prompt('新增快速標記名稱：');
+  if (!name || !name.trim()) return;
+  const tag = name.trim();
+  if (customTags.includes(tag)) { showToast('標記已存在'); return; }
+  customTags.push(tag);
+  saveCustomTags();
+  renderCustomTagsInline();
+  showToast('已新增標記：' + tag);
 }
 
 // ── EXTRACTION ──
@@ -536,86 +526,53 @@ function handleKeyDown(e) {
 async function runExtraction() {
   const rawInput = document.getElementById('captureInput').value.trim();
   if (!rawInput) return;
-
   const btn = document.getElementById('extractBtn');
   const panel = document.getElementById('extractionPanel');
   const header = document.getElementById('extractionHeader');
   const preview = document.getElementById('nodesPreview');
   const saveBtn = document.getElementById('saveAllBtn');
-
   btn.textContent = '萃取中…'; btn.classList.add('loading');
   panel.classList.add('visible');
   header.innerHTML = `<div class="pulse-dot"></div><span class="loading-dots">萃取中<span>.</span><span>.</span><span>.</span></span>`;
   preview.innerHTML = ''; saveBtn.style.display = 'none'; pendingNodes = [];
-
-  // Clean input (remove URL for cleaner text)
   const textOnly = rawInput.replace(/(https?:\/\/[^\s]+)/g, '').trim();
   const tagsHint = activeQTags.size > 0 ? `用戶預設標籤：${[...activeQTags].join(', ')}。` : '';
-
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        system: `你是 Vivian 的個人 AI 洞察節點萃取器。Vivian 是生技公司的 CMC Executive Director，同時在建立 Fire by Design 個人品牌（biotech insider mentor + body management systems educator）。
-
-從輸入中萃取 2-4 個關鍵節點。每個節點：
-- title：繁體中文，20字以內，精準描述核心概念
-- excerpt：一句話說明，40字以內，具體可操作
-- tags：陣列，可包含 "tool"（工具/平台）、"concept"（概念/框架）、"apply"（立即可應用）
-- track："cmc"（CMC法規/知識工作）、"fire"（內容創作/個人品牌）、"both"
-
-${tagsHint}
-優先萃取行動導向的洞察，而不只是摘要。
-只回傳 JSON 陣列，不含任何其他文字或 markdown。
-格式：[{"title":"...","excerpt":"...","tags":["concept"],"track":"both"}]`,
+        model: 'claude-sonnet-4-20250514', max_tokens: 1000,
+        system: `你是 Vivian 的個人 AI 洞察節點萃取器。Vivian 是生技公司的 CMC Executive Director，同時在建立 Fire by Design 個人品牌（biotech insider mentor + body management systems educator）。從輸入中萃取 2-4 個關鍵節點。每個節點：title（繁中20字內）、excerpt（40字內）、tags（"tool"/"concept"/"apply"）、track（"cmc"/"fire"/"both"）。${tagsHint}只回傳 JSON 陣列，不含任何其他文字或 markdown。格式：[{"title":"...","excerpt":"...","tags":["concept"],"track":"both"}]`,
         messages: [{ role: 'user', content: textOnly || rawInput }]
       })
     });
-
     const data = await res.json();
     const text = data.content?.find(c => c.type === 'text')?.text || '[]';
     let extracted;
     try { extracted = JSON.parse(text.replace(/```json?|```/g, '').trim()); }
     catch { extracted = fallback(rawInput); }
-
-    header.innerHTML = `<span style="color:var(--a);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;animation:none">萃取完成 — ${extracted.length} 個節點</span>`;
-
+    header.innerHTML = `<span style="color:var(--a);font-size:9px;letter-spacing:0.12em;text-transform:uppercase">萃取完成 — ${extracted.length} 個節點</span>`;
     const now = new Date().toISOString();
     pendingNodes = extracted.map((n, i) => ({
-      ...n,
-      id: Date.now() + i,
+      ...n, id: Date.now() + i,
       sourceLabel: detectedUrl ? new URL(detectedUrl).hostname : '手動輸入',
-      sourceUrl: detectedUrl || '',
-      createdAt: now,
-      rawInput: rawInput,
-      imageUrl: '',
-      connections: 0
+      sourceUrl: detectedUrl || '', createdAt: now, rawInput: rawInput, imageUrl: '', connections: 0
     }));
-
     pendingNodes.forEach((n, i) => {
       const chip = document.createElement('div');
-      chip.className = 'node-chip';
-      chip.style.animationDelay = i * 0.1 + 's';
+      chip.className = 'node-chip'; chip.style.animationDelay = i * 0.1 + 's';
       chip.innerHTML = `${n.tags.map(t => `<span class="chip-type type-${t}">${tagLabel(t)}</span>`).join('')}<span style="font-size:11px">${n.title}</span>`;
       preview.appendChild(chip);
     });
     saveBtn.style.display = 'inline-block';
-
   } catch(err) {
     pendingNodes = fallback(rawInput).map((n, i) => ({
-      ...n,
-      id: Date.now() + i,
+      ...n, id: Date.now() + i,
       sourceLabel: detectedUrl ? new URL(detectedUrl).hostname : '手動輸入',
-      sourceUrl: detectedUrl || '',
-      createdAt: new Date().toISOString(),
-      rawInput: rawInput,
-      imageUrl: '',
-      connections: 0
+      sourceUrl: detectedUrl || '', createdAt: new Date().toISOString(), rawInput: rawInput, imageUrl: '', connections: 0
     }));
-    header.innerHTML = `<span style="font-size:9px;letter-spacing:0.1em;color:var(--d);animation:none">離線模式</span>`;
+    header.innerHTML = `<span style="font-size:9px;letter-spacing:0.1em;color:var(--d)">離線模式</span>`;
     pendingNodes.forEach(n => {
       const chip = document.createElement('div');
       chip.className = 'node-chip';
@@ -624,7 +581,6 @@ ${tagsHint}
     });
     saveBtn.style.display = 'inline-block';
   }
-
   btn.textContent = '↳ 萃取節點'; btn.classList.remove('loading');
 }
 
@@ -634,25 +590,18 @@ function fallback(input) {
 }
 
 async function saveAllNodes() {
-  const saved = [];
   for (const node of pendingNodes) {
-    if (db) {
-      const ok = await saveToFirebase(node);
-      if (!ok) nodes.unshift(node); // fallback to local if Firebase fails
-    } else {
-      nodes.unshift(node);
-    }
+    if (db) { const ok = await saveToFirebase(node); if (!ok) nodes.unshift(node); }
+    else nodes.unshift(node);
   }
-
   document.getElementById('captureInput').value = '';
   document.getElementById('captureInput').style.height = 'auto';
   document.getElementById('extractionPanel').classList.remove('visible');
   document.getElementById('urlPreview').classList.remove('visible');
-  detectedUrl = null;
-  activeQTags.clear();
+  detectedUrl = null; activeQTags.clear();
   ['tool','concept','apply','cmc','fire'].forEach(t => { document.getElementById(`qt-${t}`).className = 'qtag'; });
+  renderCustomTagsInline();
   pendingNodes = [];
-
   if (!db) renderAll();
   showToast('節點已儲存 ✓');
 }
@@ -660,57 +609,117 @@ async function saveAllNodes() {
 // ── WEEKLY SUMMARY ──
 async function runWeeklySummary() {
   if (nodes.length === 0) { showToast('節點庫是空的'); return; }
-  const week = nodes.slice(0, 20);
-  const summaryText = week.map(n => `・${n.title}：${n.excerpt}`).join('\n');
-
   showToast('產生週摘要中…');
   try {
+    const summaryText = nodes.slice(0, 20).map(n => `・${n.title}：${n.excerpt}`).join('\n');
     const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 800,
-        system: `你是 Vivian 的個人知識助理。她是 CMC Executive Director，同時在建立 Fire by Design 個人品牌。根據她最近的洞察節點，產出一份簡潔的週摘要，包含：
-1. 這週最值得深化的 2-3 個方向
-2. 可直接應用在 CMC 工作的洞察（1-2 條）
-3. 可用在 Fire by Design 內容的素材（1-2 條）
-用繁體中文，條列式，簡潔有力。`,
-        messages: [{ role: 'user', content: `最近的洞察節點：\n${summaryText}` }]
+        model: 'claude-sonnet-4-20250514', max_tokens: 800,
+        system: `你是 Vivian 的個人知識助理。根據她最近的洞察節點，產出週摘要：1. 最值得深化的 2-3 個方向 2. 可應用在 CMC 的洞察（1-2條）3. 可用在 Fire by Design 的素材（1-2條）。繁體中文，條列式。`,
+        messages: [{ role: 'user', content: summaryText }]
       })
     });
     const data = await res.json();
     const summary = data.content?.find(c => c.type === 'text')?.text || '無法產生摘要';
+    const summaryNode = { title: `週摘要 ${new Date().toLocaleDateString('zh-TW')}`, excerpt: summary.slice(0, 80) + '…', tags: ['concept'], track: 'both', sourceLabel: 'Insight OS 週摘要', sourceUrl: '', createdAt: new Date().toISOString(), rawInput: summary, imageUrl: '', connections: 0, isSummary: true };
+    if (db) await saveToFirebase(summaryNode); else { nodes.unshift(summaryNode); renderAll(); }
+    showToast('週摘要已產生 ✓');
+  } catch(e) { showToast('週摘要產生失敗'); }
+}
 
-    // Save summary as a special node
-    const summaryNode = {
-      title: `週摘要 ${new Date().toLocaleDateString('zh-TW')}`,
-      excerpt: summary.slice(0, 80) + '…',
-      tags: ['concept'],
-      track: 'both',
-      sourceLabel: 'Insight OS 週摘要',
-      sourceUrl: '',
-      createdAt: new Date().toISOString(),
-      rawInput: summary,
-      imageUrl: '',
-      connections: 0,
-      isSummary: true
-    };
+// ── MODAL ──
+function openModal(nodeJson) {
+  const n = typeof nodeJson === 'string' ? JSON.parse(nodeJson) : nodeJson;
+  currentNode = n;
+  document.getElementById('modalTitle').value = n.title || '';
+  document.getElementById('modalExcerpt').value = n.excerpt || '';
 
-    if (db) { await saveToFirebase(summaryNode); }
-    else { nodes.unshift(summaryNode); renderAll(); }
-    showToast('週摘要已產生並儲存 ✓');
-  } catch(e) {
-    showToast('週摘要產生失敗');
+  // Tag toggles
+  const allTags = ['tool', 'concept', 'apply', ...customTags];
+  const tagToggles = document.getElementById('modalTagToggles');
+  tagToggles.innerHTML = allTags.map(t => {
+    const active = (n.tags || []).includes(t);
+    return `<button class="tag-toggle ${active ? 'on-' + (t === 'tool' || t === 'concept' ? t : customTags.includes(t) ? 'custom' : t) : ''}" onclick="toggleModalTag(this,'${t}')">${tagLabel(t)}</button>`;
+  }).join('');
+
+  // Track toggles
+  const tracks = ['cmc', 'fire', 'both'];
+  const trackToggles = document.getElementById('modalTrackToggles');
+  trackToggles.innerHTML = tracks.map(tr => {
+    const active = n.track === tr;
+    return `<button class="track-toggle ${active ? 'on-' + tr : ''}" onclick="selectModalTrack(this,'${tr}')">${tr === 'cmc' ? 'CMC' : tr === 'fire' ? 'Fire' : '兩者'}</button>`;
+  }).join('');
+
+  // Raw input
+  const rawSection = document.getElementById('modalRawSection');
+  const rawEl = document.getElementById('modalRaw');
+  if (n.rawInput && n.rawInput !== n.excerpt) {
+    rawEl.textContent = n.rawInput; rawSection.style.display = 'block';
+  } else { rawSection.style.display = 'none'; }
+
+  // Source
+  const link = document.getElementById('modalSourceLink');
+  if (n.sourceUrl) { link.href = n.sourceUrl; link.textContent = n.sourceLabel || n.sourceUrl; link.style.display = 'inline'; }
+  else link.style.display = 'none';
+
+  document.getElementById('modalOverlay').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function toggleModalTag(btn, tag) {
+  const isOn = btn.className.includes('on-');
+  if (isOn) {
+    btn.className = 'tag-toggle';
+  } else {
+    const cls = tag === 'tool' || tag === 'concept' ? tag : customTags.includes(tag) ? 'custom' : tag;
+    btn.className = 'tag-toggle on-' + cls;
   }
 }
 
-// ── RENDER ──
-function renderAll() {
-  updateStats();
-  renderNodes();
-  updateSidebarCounts();
+function selectModalTrack(btn, track) {
+  document.querySelectorAll('.track-toggle').forEach(b => b.className = 'track-toggle');
+  btn.className = 'track-toggle on-' + track;
 }
+
+async function saveEdit() {
+  if (!currentNode) return;
+  const title = document.getElementById('modalTitle').value.trim();
+  const excerpt = document.getElementById('modalExcerpt').value.trim();
+  const tags = Array.from(document.querySelectorAll('.tag-toggle')).filter(b => b.className.includes('on-')).map(b => b.textContent === '工具' ? 'tool' : b.textContent === '概念' ? 'concept' : b.textContent === '可應用' ? 'apply' : b.textContent);
+  const trackBtn = document.querySelector('.track-toggle.on-cmc, .track-toggle.on-fire, .track-toggle.on-both');
+  const track = trackBtn ? (trackBtn.className.includes('on-cmc') ? 'cmc' : trackBtn.className.includes('on-fire') ? 'fire' : 'both') : currentNode.track;
+  const updated = { ...currentNode, title, excerpt, tags, track };
+  if (db && currentNode.firebaseId) {
+    await updateInFirebase(currentNode.firebaseId, { title, excerpt, tags, track });
+  } else {
+    const idx = nodes.findIndex(n => n.id === currentNode.id);
+    if (idx > -1) nodes[idx] = updated;
+    renderAll();
+  }
+  closeModalDirect();
+  showToast('已儲存修改 ✓');
+}
+
+async function deleteCurrentNode() {
+  if (!currentNode) return;
+  if (!confirm('確定要刪除這個節點嗎？')) return;
+  if (db && currentNode.firebaseId) {
+    await deleteFromFirebase(currentNode.firebaseId);
+  } else {
+    nodes = nodes.filter(n => n.id !== currentNode.id);
+    renderAll();
+  }
+  closeModalDirect();
+  showToast('節點已刪除');
+}
+
+function closeModalOverlay(e) { if (e.target === document.getElementById('modalOverlay')) closeModalDirect(); }
+function closeModalDirect() { document.getElementById('modalOverlay').style.display = 'none'; document.body.style.overflow = ''; currentNode = null; }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalDirect(); });
+
+// ── RENDER ──
+function renderAll() { updateStats(); renderNodes(); updateSidebarCounts(); }
 
 function updateStats() {
   document.getElementById('stat-total').textContent = nodes.length;
@@ -730,30 +739,28 @@ function tagLabel(t) {
 
 function renderNodes(list) {
   const grid = document.getElementById('nodesGrid');
-  let filtered = (list !== undefined) ? list : nodes;
-  if (activeFilter) filtered = filtered.filter(n => Array.isArray(n.tags) && n.tags.includes(activeFilter));
-
+  let filtered = list !== undefined ? list : nodes;
+  if (activeFilter) filtered = filtered.filter(n => n.tags && n.tags.includes(activeFilter));
   if (!filtered.length) {
     grid.innerHTML = '<div class="empty-state"><div class="empty-icon">◎</div><div class="empty-text">尚無節點<br>貼入任何內容，按「萃取節點」開始</div></div>';
     return;
   }
-
   grid.innerHTML = filtered.map((n, i) => {
     const sourceHtml = n.sourceUrl
-      ? `<a class="card-source-link" href="${n.sourceUrl}" target="_blank" rel="noopener">${n.sourceLabel || n.sourceUrl}</a>`
+      ? `<a class="card-source-link" href="${n.sourceUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${n.sourceLabel || n.sourceUrl}</a>`
       : `<span class="card-source-text">${n.sourceLabel || '手動輸入'}</span>`;
     const dateStr = n.createdAt ? n.createdAt.slice(0, 10) : '';
     const trackTags = n.track === 'both'
       ? `<span class="card-tag tag-cmc">CMC</span><span class="card-tag tag-fire">Fire</span>`
       : `<span class="card-tag tag-${n.track}">${n.track === 'cmc' ? 'CMC' : 'Fire'}</span>`;
-    const tags = (n.tags || []).map(t => `<span class="card-tag tag-${t}">${tagLabel(t)}</span>`).join('');
-    return `
-      <div class="node-card track-${n.track}" style="animation-delay:${i * 0.04}s">
-        <div class="card-tags">${tags}${trackTags}</div>
-        <div class="card-title">${n.title}</div>
-        <div class="card-excerpt">${n.excerpt}</div>
-        <div class="card-footer">${sourceHtml}<span class="card-date">${dateStr}</span></div>
-      </div>`;
+    const tags = (n.tags || []).map(t => `<span class="card-tag ${['tool','concept','apply'].includes(t) ? 'tag-' + t : 'tag-custom'}">${tagLabel(t)}</span>`).join('');
+    const nodeJson = JSON.stringify(n).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    return `<div class="node-card track-${n.track}" style="animation-delay:${i * 0.04}s" onclick="openModal('${nodeJson}')">
+      <div class="card-tags">${tags}${trackTags}</div>
+      <div class="card-title">${n.title}</div>
+      <div class="card-excerpt">${n.excerpt}</div>
+      <div class="card-footer">${sourceHtml}<span class="card-date">${dateStr}</span></div>
+    </div>`;
   }).join('');
 }
 
@@ -785,16 +792,12 @@ function switchView(view, el) {
   document.getElementById('libraryView').style.display = view === 'library' ? 'block' : 'none';
   document.getElementById('flowView').style.display = view === 'flow' ? 'block' : 'none';
   document.getElementById('settingsView').style.display = view === 'settings' ? 'block' : 'none';
-
-  // Pre-fill settings if saved
   if (view === 'settings') {
     const cfg = loadConfig();
-    if (cfg) {
-      ['apiKey','authDomain','databaseURL','projectId','storageBucket','appId'].forEach(k => {
-        const el = document.getElementById('cfg-' + k);
-        if (el && cfg[k]) el.value = cfg[k];
-      });
-    }
+    if (cfg) ['apiKey','authDomain','databaseURL','projectId','storageBucket','appId'].forEach(k => {
+      const el = document.getElementById('cfg-' + k);
+      if (el && cfg[k]) el.value = cfg[k];
+    });
   }
 }
 
@@ -808,7 +811,7 @@ function showToast(msg) {
 // ── INIT ──
 window.onload = () => {
   renderAll();
-  // Bookmarklet import: read ?import= param and fill input
+  renderCustomTagsInline();
   const params = new URLSearchParams(window.location.search);
   const imported = params.get('import');
   if (imported) {
@@ -817,7 +820,6 @@ window.onload = () => {
     input.value = decoded;
     handleInput(input);
     input.focus();
-    // Clean URL without reload
     window.history.replaceState({}, '', window.location.pathname);
   }
 };
