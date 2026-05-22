@@ -806,7 +806,21 @@ function showToast(msg) {
 }
 
 // ── INIT ──
-window.onload = () => { renderAll(); };
+window.onload = () => {
+  renderAll();
+  // Bookmarklet import: read ?import= param and fill input
+  const params = new URLSearchParams(window.location.search);
+  const imported = params.get('import');
+  if (imported) {
+    const decoded = decodeURIComponent(imported);
+    const input = document.getElementById('captureInput');
+    input.value = decoded;
+    handleInput(input);
+    input.focus();
+    // Clean URL without reload
+    window.history.replaceState({}, '', window.location.pathname);
+  }
+};
 </script>
 </body>
 </html>
