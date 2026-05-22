@@ -463,7 +463,13 @@ function connectFirebaseWithConfig(cfg) {
     onValue(nodesRef, snap => {
       const data = snap.val();
       if (data) {
-        nodes = Object.entries(data).map(([id, v]) => ({ ...v, firebaseId: id }));
+        nodes = Object.entries(data).map(([id, v]) => ({
+          ...v,
+          firebaseId: id,
+          // Firebase sometimes stores arrays as objects — normalize back
+          tags: Array.isArray(v.tags) ? v.tags : Object.values(v.tags || {}),
+          track: v.track || 'both'
+        }));
         nodes.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
       } else {
         nodes = [];
