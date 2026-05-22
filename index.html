@@ -365,6 +365,12 @@ window.addEventListener('fb-ready',function(){
   var saved=loadCfg();
   if(saved&&saved.apiKey)connectWithCfg(saved);
 });
+// Fallback: if fb-ready already fired before this script ran
+if(window._fb){
+  fbReady=true;
+  var _saved=loadCfg();
+  if(_saved&&_saved.apiKey)connectWithCfg(_saved);
+}
 function loadCfg(){try{return JSON.parse(localStorage.getItem('ins-cfg')||'null');}catch{return null;}}
 function connectFirebase(){
   var cfg={
