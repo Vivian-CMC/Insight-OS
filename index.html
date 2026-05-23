@@ -182,6 +182,8 @@ textarea.mta:focus{outline:none;border-color:var(--a);}
     <div class="logo">Insight <span>OS</span></div>
     <span class="tsep"></span>
     <div class="fstatus"><div class="sdot" id="sdot"></div><span id="stxt">未連線</span></div>
+    <button id="loginBtn" onclick="handleLogin()" style="font-size:10px;padding:4px 12px;border-radius:20px;border:1px solid var(--bdm);background:none;color:var(--txm);cursor:pointer;font-family:inherit;display:none;">Google 登入</button>
+    <button id="logoutBtn" onclick="handleLogout()" style="font-size:10px;padding:4px 12px;border-radius:20px;border:1px solid var(--bdm);background:none;color:var(--txm);cursor:pointer;font-family:inherit;display:none;">登出</button>
     <div class="ttag">v1.0</div>
   </header>
   <aside class="sidebar">
@@ -350,7 +352,8 @@ textarea.mta:focus{outline:none;border-color:var(--a);}
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getDatabase, ref, push, onValue, remove, update } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
-window._fb = { initializeApp, getDatabase, ref, push, onValue, remove, update };
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+window._fb = { initializeApp, getDatabase, ref, push, onValue, remove, update, getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut };
 window.dispatchEvent(new Event('fb-ready'));
 </script>
 
@@ -360,55 +363,73 @@ var custTags=JSON.parse(localStorage.getItem('ins-ct')||'[]');
 var db=null, fbReady=false;
 
 // ── FIREBASE ──
+// ── HARDCODED FIREBASE CONFIG ──
+var FIREBASE_CFG = {
+  apiKey: "AIzaSyATSS91GrFSXXF1NLMis9Z_OELgWbxwaEw",
+  authDomain: "vivian-os.firebaseapp.com",
+  databaseURL: "https://vivian-os-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "vivian-os",
+  storageBucket: "vivian-os.firebasestorage.app",
+  appId: "1:741967247175:web:72ab527f8aa21842f4fe62"
+};
+
 window.addEventListener('fb-ready',function(){
   fbReady=true;
-  var saved=loadCfg();
-  if(saved&&saved.apiKey)connectWithCfg(saved);
+  initFirebase();
 });
-// Fallback: if fb-ready already fired before this script ran
-if(window._fb){
-  fbReady=true;
-  var _saved=loadCfg();
-  if(_saved&&_saved.apiKey)connectWithCfg(_saved);
-}
-function loadCfg(){try{return JSON.parse(localStorage.getItem('ins-cfg')||'null');}catch{return null;}}
-function connectFirebase(){
-  var cfg={
-    apiKey:document.getElementById('cfg-apiKey').value.trim(),
-    authDomain:document.getElementById('cfg-authDomain').value.trim(),
-    databaseURL:document.getElementById('cfg-databaseURL').value.trim(),
-    projectId:document.getElementById('cfg-projectId').value.trim(),
-    storageBucket:document.getElementById('cfg-storageBucket').value.trim(),
-    appId:document.getElementById('cfg-appId').value.trim()
-  };
-  if(!cfg.apiKey||!cfg.databaseURL){toast('請填入 API Key 和 Database URL');return;}
-  localStorage.setItem('ins-cfg',JSON.stringify(cfg));
-  connectWithCfg(cfg);
-}
-function connectWithCfg(cfg){
-  if(!fbReady){setTimeout(function(){connectWithCfg(cfg);},200);return;}
+if(window._fb){ fbReady=true; initFirebase(); }
+
+function loadCfg(){return FIREBASE_CFG;}
+function connectFirebase(){ toast('設定已內建，自動連線中'); }
+
+function initFirebase(){
   try{
-    var app=window._fb.initializeApp(cfg,'ins-'+Date.now());
+    var app=window._fb.initializeApp(FIREBASE_CFG,'ins-'+Date.now());
     db=window._fb.getDatabase(app);
-    document.getElementById('sdot').classList.add('ok');
-    document.getElementById('stxt').textContent='已連線';
-    window._fb.onValue(window._fb.ref(db,'cmc_nodes'),function(snap){
-      var data=snap.val();
-      if(data){
-        nodes=Object.entries(data).map(function(e){
-          var v=e[1];
-          return Object.assign({},v,{
-            firebaseId:e[0],
-            tags:Array.isArray(v.tags)?v.tags:Object.values(v.tags||{}),
-            track:v.track||'both'
-          });
+    var auth=window._fb.getAuth(app);
+    // Auth state listener
+    window._fb.onAuthStateChanged(auth,function(user){
+      if(user){
+        document.getElementById('sdot').classList.add('ok');
+        document.getElementById('stxt').textContent=user.displayName||'已登入';
+        document.getElementById('loginBtn').style.display='none';
+        document.getElementById('logoutBtn').style.display='';
+        // Load data
+        window._fb.onValue(window._fb.ref(db,'cmc_nodes'),function(snap){
+          var data=snap.val();
+          if(data){
+            nodes=Object.entries(data).map(function(e){
+              var v=e[1];
+              return Object.assign({},v,{
+                firebaseId:e[0],
+                tags:Array.isArray(v.tags)?v.tags:Object.values(v.tags||{}),
+                track:v.track||'both'
+              });
+            });
+            nodes.sort(function(a,b){return(b.createdAt||'').localeCompare(a.createdAt||'');});
+          } else nodes=[];
+          renderAll();
         });
-        nodes.sort(function(a,b){return(b.createdAt||'').localeCompare(a.createdAt||'');});
-      } else nodes=[];
-      renderAll();
+      } else {
+        document.getElementById('sdot').classList.remove('ok');
+        document.getElementById('stxt').textContent='未登入';
+        document.getElementById('loginBtn').style.display='';
+        document.getElementById('logoutBtn').style.display='none';
+        nodes=[];renderAll();
+      }
     });
-    toast('Firebase 連線成功 ✓');
-  }catch(e){toast('連線失敗：'+e.message);}
+    window._auth=auth;
+  }catch(e){toast('初始化失敗：'+e.message);}
+}
+
+function handleLogin(){
+  if(!window._auth)return;
+  var provider=new window._fb.GoogleAuthProvider();
+  window._fb.signInWithPopup(window._auth,provider).catch(function(e){toast('登入失敗：'+e.message);});
+}
+function handleLogout(){
+  if(!window._auth)return;
+  window._fb.signOut(window._auth).then(function(){toast('已登出');});
 }
 async function fbSave(node){
   if(!db)return false;
