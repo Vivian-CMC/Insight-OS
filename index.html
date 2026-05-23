@@ -375,7 +375,7 @@ window.AUTH = AUTH;
 window.fbRef = ref;
 window.fbPush = push;
 window.fbRemove = remove;
-window.fbUpdate = update;
+window.fbUpdateRaw = update;
 
 // Handle redirect result FIRST before auth state fires
 getRedirectResult(AUTH).then(result => {
@@ -577,7 +577,7 @@ async function fbSave(node) {
 }
 async function fbUpdate(fid, upd) {
   if (!window.DB || !fid) return;
-  try { await window.fbUpdate(window.fbRef(window.DB,'cmc_nodes/'+fid), upd); } catch(e) {}
+  try { await window.fbUpdateRaw(window.fbRef(window.DB,'cmc_nodes/'+fid), upd); } catch(e) { console.error('Update failed:', e); toast('儲存失敗：' + (e.message || e.code || 'unknown')); throw e; }
 }
 async function fbDelete(fid) {
   if (!window.DB || !fid) return;
