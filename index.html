@@ -250,6 +250,11 @@ textarea.mta:focus{outline:none;border-color:var(--a);}
           <option value="90">過去 90 天（季度）</option>
           <option value="custom">自訂區間</option>
         </select>
+        <select class="rv-sel" id="rvDepth">
+          <option value="brief">簡短</option>
+          <option value="standard" selected>標準</option>
+          <option value="deep">深入</option>
+        </select>
         <span id="rvCustom" style="display:none;align-items:center;gap:5px">
           <input type="date" id="rvFrom" class="rv-sel">
           <span style="color:var(--txd)">→</span>
@@ -365,6 +370,7 @@ const AUTH = getAuth(app);
 
 // Expose DB ops globally
 window.DB = DB;
+window.AUTH = AUTH;
 window.fbRef = ref;
 window.fbPush = push;
 window.fbRemove = remove;
@@ -444,6 +450,33 @@ window.nodes = window.nodes || [];
 var pending = [], curId = null, detUrl = null, actFlt = null, actQt = {};
 var custTags = JSON.parse(localStorage.getItem('ins-ct') || '[]');
 var rvText = '', rvRange = '';
+var rvMeta = null;
+var REVIEW_PROXY_URL = 'https://insight-os-review.vivian-cmc.workers.dev';
+
+async function callReviewProxy(reqBody) {
+  if (!REVIEW_PROXY_URL || REVIEW_PROXY_URL.indexOf('YOUR_SUBDOMAIN') > -1) {
+    throw new Error('尚未設定回顧代理網址 REVIEW_PROXY_URL');
+  }
+  var user = window.AUTH && window.AUTH.currentUser;
+  if (!user) throw new Error('請先使用 Google 登入');
+  var idToken = await user.getIdToken();
+  var res = await fetch(REVIEW_PROXY_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + idToken
+    },
+    body: reqBody
+  });
+  var text = await res.text();
+  var data;
+  try { data = text ? JSON.parse(text) : {}; } catch(e) { data = { error: { message: text || 'Invalid proxy response' } }; }
+  if (!res.ok || data.error) {
+    var msg = data.error && data.error.message ? data.error.message : ('HTTP ' + res.status);
+    throw new Error(msg);
+  }
+  return data;
+}
 
 // ── LABEL MAP ──
 function tl(t) {
@@ -572,10 +605,38 @@ function onRvPreset() {
   var c = document.getElementById('rvCustom');
   c.style.display = v==='custom' ? 'flex' : 'none';
 }
+function fmtDate(d) {
+  var y = d.getFullYear();
+  var m = String(d.getMonth()+1).padStart(2,'0');
+  var day = String(d.getDate()).padStart(2,'0');
+  return y + '/' + m + '/' + day;
+}
+function isoDate(d) {
+  var y = d.getFullYear();
+  var m = String(d.getMonth()+1).padStart(2,'0');
+  var day = String(d.getDate()).padStart(2,'0');
+  return y + '-' + m + '-' + day;
+}
+function reviewTypeOf(preset) {
+  return preset === '7' ? 'weekly' : preset === '30' ? 'monthly' : preset === '90' ? 'quarterly' : 'custom';
+}
+function reviewTitle(type, from, to) {
+  var map = {weekly:'週回顧', monthly:'月回顧', quarterly:'季回顧', custom:'自訂回顧'};
+  return (map[type] || '回顧') + '｜' + fmtDate(from) + '-' + fmtDate(to);
+}
+function reviewDepthPrompt(depth) {
+  if (depth === 'brief') return '篇幅：簡短。不超過 350 字。請只列 3 個重點，每點 1-2 句，最後給 1 個下一步。';
+  if (depth === 'deep') return '篇幅：深入。可以展開細節，約 1000-1500 字。請保留細膩推理、模式辨識與具體下一步。';
+  return '篇幅：標準。約 600-900 字。請保留重點與可行動建議，避免過度鋪陳。';
+}
+function reviewMaxTokens(depth) {
+  return depth === 'brief' ? 650 : depth === 'deep' ? 1800 : 1200;
+}
 async function runReview() {
   var nodes = window.nodes || [];
   if (!nodes.length) { toast('節點庫是空的'); return; }
   var preset = document.getElementById('rvPreset').value;
+  var depth = document.getElementById('rvDepth').value;
   var now = new Date(), from, to = new Date();
   if (preset === 'custom') {
     var f=document.getElementById('rvFrom').value, t=document.getElementById('rvTo').value;
@@ -586,8 +647,11 @@ async function runReview() {
   }
   var filtered = nodes.filter(n => n.createdAt && new Date(n.createdAt)>=from && new Date(n.createdAt)<=to);
   if (!filtered.length) { toast('這段區間內沒有節點'); return; }
-  var label = preset==='custom' ? document.getElementById('rvFrom').value+' → '+document.getElementById('rvTo').value : '過去'+preset+'天（'+from.toLocaleDateString('zh-TW')+' → '+to.toLocaleDateString('zh-TW')+'）';
-  rvRange = label;
+  var type = reviewTypeOf(preset);
+  var rangeLabel = fmtDate(from) + ' → ' + fmtDate(to);
+  var label = (preset==='custom' ? '自訂區間' : '過去'+preset+'天') + '（' + rangeLabel + '）';
+  rvRange = rangeLabel;
+  rvMeta = {reviewType:type, reviewFrom:isoDate(from), reviewTo:isoDate(to), reviewRangeLabel:rangeLabel, reviewDepth:depth, reviewNodeCount:filtered.length};
   var hdr=document.getElementById('rvHdr'), rc=document.getElementById('rvContent'), rw=document.getElementById('rvResultWrap');
   hdr.textContent='回顧生成中…'; rc.textContent=''; rw.style.display='block';
   // Limit to 30 nodes max to avoid request size issues
@@ -600,20 +664,15 @@ async function runReview() {
     '\n\n【未解的問題】\nquestion標籤的節點或懸念' +
     '\n\n【可行動項目】\n具體可做的事不超過3條' +
     '\n\n【值得深化的洞察】\n最有潛力的1-2個想法';
-  var sys = sysBase + (isQ ? '\n\n【季度 Odyssey 對照】\n這段時間是否靠近長期目標方向' : '');
-  var userMsg = '回顧區間：' + label + '\n\n節點清單：\n' + summary;
+  var sys = sysBase + '\n\n【篇幅控制】\n' + reviewDepthPrompt(depth) + (isQ ? '\n\n【季度 Odyssey 對照】\n這段時間是否靠近長期目標方向' : '');
+  var userMsg = '回顧區間：' + rangeLabel + '\n回顧類型：' + type + '\n篇幅：' + depth + '\n\n節點清單：\n' + summary;
   try {
-    var reqBody = JSON.stringify({model:'claude-sonnet-4-20250514', max_tokens:1200, system:sys, messages:[{role:'user', content:userMsg}]});
+    var reqBody = JSON.stringify({model:'gpt-5.5', max_tokens:reviewMaxTokens(depth), system:sys, messages:[{role:'user', content:userMsg}]});
     console.log('Review request size:', reqBody.length, 'chars');
-    var res = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: reqBody
-    });
-    if (!res.ok) { throw new Error('HTTP '+res.status); }
-    var data = await res.json();
+    var data = await callReviewProxy(reqBody);
     if (data.error) { throw new Error(data.error.message||'API error'); }
     var txt = data.content && data.content.find(c=>c.type==='text');
-    rvText = txt ? txt.text : '無法產生回顧';
+    rvText = '回顧區間：' + rangeLabel + '\n\n' + (txt ? txt.text : '無法產生回顧');
     hdr.textContent = '回顧完成 — '+label;
     rc.textContent = rvText;
   } catch(e) { rvText='錯誤：'+e.message; hdr.textContent='發生錯誤'; rc.textContent=rvText; console.error('Review error:',e); }
@@ -621,7 +680,10 @@ async function runReview() {
 async function saveReview() {
   if (!rvText) return;
   var preset = document.getElementById('rvPreset').value;
-  var sn = {title:(preset==='90'?'季度回顧 ':'回顧 ')+new Date().toLocaleDateString('zh-TW'), excerpt:rvText.slice(0,80)+'…', tags:['review'], track:'both', sourceLabel:'Insight OS 回顧', sourceUrl:'', createdAt:new Date().toISOString(), rawInput:rvText, imageUrl:'', connections:0};
+  var meta = rvMeta || {reviewType:reviewTypeOf(preset), reviewFrom:'', reviewTo:'', reviewRangeLabel:rvRange, reviewDepth:'standard', reviewNodeCount:0};
+  var title = meta.reviewFrom && meta.reviewTo ? reviewTitle(meta.reviewType, new Date(meta.reviewFrom), new Date(meta.reviewTo)) : ((preset==='90'?'季度回顧 ':'回顧 ')+new Date().toLocaleDateString('zh-TW'));
+  var tags = ['review', meta.reviewType, meta.reviewDepth].filter(Boolean);
+  var sn = {title:title, excerpt:rvText.slice(0,80)+'…', tags:tags, track:'both', sourceLabel:'Insight OS 回顧', sourceUrl:'', createdAt:new Date().toISOString(), rawInput:rvText, imageUrl:'', connections:0, reviewType:meta.reviewType, reviewFrom:meta.reviewFrom, reviewTo:meta.reviewTo, reviewRangeLabel:meta.reviewRangeLabel, reviewDepth:meta.reviewDepth, reviewNodeCount:meta.reviewNodeCount};
   if (window.DB) await fbSave(sn); else { window.nodes.unshift(sn); renderAll(); }
   toast('回顧已存成卡片 ✓'); toggleReview();
 }
