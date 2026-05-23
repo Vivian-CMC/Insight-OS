@@ -34,13 +34,13 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans TC',system-ui,s
 .tpill.l{border-left:3px solid var(--c);}
 .tcnt{font-size:10px;color:var(--txd);background:var(--s2);padding:1px 6px;border-radius:10px;}
 .main{display:flex;flex-direction:column;overflow:hidden;}
-.cz{background:var(--s2);border-bottom:1px solid var(--bdr);padding:13px 20px 11px;}
+.cz{background:var(--s2);border-bottom:1px solid var(--bdr);padding:13px 20px 11px;min-width:0;}
 .czlb{font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--txd);margin-bottom:6px;}
-.crow{display:flex;gap:7px;align-items:flex-start;}
+.crow{display:flex;gap:7px;align-items:flex-start;flex-wrap:wrap;}
 textarea.cinp{flex:1;background:var(--bg);border:1px solid var(--bdm);border-radius:7px;padding:8px 11px;color:var(--tx);resize:none;min-height:40px;max-height:110px;line-height:1.55;font-size:12px;font-family:inherit;font-weight:300;}
 textarea.cinp:focus{outline:none;border-color:var(--a);}
 textarea.cinp::placeholder{color:var(--txd);}
-.bex{background:var(--a);color:#fff;border:none;border-radius:7px;padding:9px 14px;font-size:11px;font-weight:500;cursor:pointer;white-space:nowrap;align-self:flex-start;font-family:inherit;}
+.bex{background:var(--a);color:#fff;border:none;border-radius:7px;padding:9px 14px;font-size:11px;font-weight:500;cursor:pointer;white-space:nowrap;align-self:flex-start;font-family:inherit;flex-shrink:0;}
 .bex:hover{opacity:.87;}
 .ubar{display:none;align-items:center;gap:5px;margin-top:6px;padding:4px 9px;background:rgba(106,127,193,.07);border:1px solid rgba(106,127,193,.18);border-radius:5px;font-size:10px;color:var(--c);}
 .ubar.on{display:flex;}
@@ -157,7 +157,7 @@ textarea.mta:focus{outline:none;border-color:var(--a);}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--bdm);border-radius:2px;}
 @media(max-width:600px){.shell{grid-template-columns:1fr;}.sidebar{display:none;}.stats{grid-template-columns:repeat(2,1fr);}}
-@media(max-width:480px){.crow{flex-direction:column;}.bex{width:100%;text-align:center;}}
+@media(max-width:600px){.crow{flex-direction:column;}.bex{width:100%;text-align:center;margin-top:6px;}}
 </style>
 </head>
 <body>
@@ -590,7 +590,9 @@ async function runReview() {
   rvRange = label;
   var hdr=document.getElementById('rvHdr'), rc=document.getElementById('rvContent'), rw=document.getElementById('rvResultWrap');
   hdr.textContent='回顧生成中…'; rc.textContent=''; rw.style.display='block';
-  var summary = filtered.map(n => '['+( n.track||'both')+']['+((n.tags||[]).join(','))+'] '+n.title+'：'+n.excerpt).join('\n');
+  // Limit to 30 nodes max to avoid request size issues
+  var limited = filtered.slice(0, 30);
+  var summary = limited.map(n => '['+( n.track||'both')+']['+((n.tags||[]).join(','))+'] '+n.title+'：'+(n.excerpt||'').slice(0,60)).join('\n');
   var isQ = preset==='90';
   var sysBase = '你是 Vivian 的個人知識助理。根據這段時間的節點，用以下格式產出回顧（繁體中文）：' +
     '\n\n【這段時間的主軸】\n2-3個核心主題' +
@@ -601,9 +603,11 @@ async function runReview() {
   var sys = sysBase + (isQ ? '\n\n【季度 Odyssey 對照】\n這段時間是否靠近長期目標方向' : '');
   var userMsg = '回顧區間：' + label + '\n\n節點清單：\n' + summary;
   try {
+    var reqBody = JSON.stringify({model:'claude-sonnet-4-20250514', max_tokens:1200, system:sys, messages:[{role:'user', content:userMsg}]});
+    console.log('Review request size:', reqBody.length, 'chars');
     var res = await fetch('https://api.anthropic.com/v1/messages', {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({model:'claude-sonnet-4-20250514', max_tokens:1200, system:sys, messages:[{role:'user', content:userMsg}]})
+      body: reqBody
     });
     if (!res.ok) { throw new Error('HTTP '+res.status); }
     var data = await res.json();
