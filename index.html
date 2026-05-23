@@ -592,18 +592,27 @@ async function runReview() {
   hdr.textContent='回顧生成中…'; rc.textContent=''; rw.style.display='block';
   var summary = filtered.map(n => '['+( n.track||'both')+']['+((n.tags||[]).join(','))+'] '+n.title+'：'+n.excerpt).join('\n');
   var isQ = preset==='90';
-  var sys = '你是 Vivian 的個人知識助理。根據這段時間的節點，用以下格式產出回顧（繁體中文）：\n\n【這段時間的主軸】\n2-3個核心主題\n\n【浮現的模式】\n跨節點重複的想法或感受\n\n【未解的問題】\nquestion標籤的節點或懸念\n\n【可行動項目】\n具體可做的事不超過3條\n\n【值得深化的洞察】\n最有潛力的1-2個想法' + (isQ ? '\n\n【季度 Odyssey 對照】\n這段時間是否靠近長期目標方向' : '');
+  var sysBase = '你是 Vivian 的個人知識助理。根據這段時間的節點，用以下格式產出回顧（繁體中文）：' +
+    '\n\n【這段時間的主軸】\n2-3個核心主題' +
+    '\n\n【浮現的模式】\n跨節點重複的想法或感受' +
+    '\n\n【未解的問題】\nquestion標籤的節點或懸念' +
+    '\n\n【可行動項目】\n具體可做的事不超過3條' +
+    '\n\n【值得深化的洞察】\n最有潛力的1-2個想法';
+  var sys = sysBase + (isQ ? '\n\n【季度 Odyssey 對照】\n這段時間是否靠近長期目標方向' : '');
+  var userMsg = '回顧區間：' + label + '\n\n節點清單：\n' + summary;
   try {
     var res = await fetch('https://api.anthropic.com/v1/messages', {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({model:'claude-sonnet-4-20250514', max_tokens:1200, system:sys, messages:[{role:'user', content:'回顧區間：'+label+'\n\n節點清單：\n'+summary}]})
+      body: JSON.stringify({model:'claude-sonnet-4-20250514', max_tokens:1200, system:sys, messages:[{role:'user', content:userMsg}]})
     });
+    if (!res.ok) { throw new Error('HTTP '+res.status); }
     var data = await res.json();
+    if (data.error) { throw new Error(data.error.message||'API error'); }
     var txt = data.content && data.content.find(c=>c.type==='text');
     rvText = txt ? txt.text : '無法產生回顧';
     hdr.textContent = '回顧完成 — '+label;
     rc.textContent = rvText;
-  } catch(e) { rvText='回顧產生失敗'; hdr.textContent='發生錯誤'; rc.textContent=rvText; toast('回顧產生失敗'); }
+  } catch(e) { rvText='錯誤：'+e.message; hdr.textContent='發生錯誤'; rc.textContent=rvText; console.error('Review error:',e); }
 }
 async function saveReview() {
   if (!rvText) return;
