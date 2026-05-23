@@ -183,6 +183,7 @@ textarea.mta:focus{outline:none;border-color:var(--a);}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--bdm);border-radius:2px;}
 @media(max-width:600px){.shell{grid-template-columns:1fr;}.sidebar{display:none;}.stats{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:480px){.crow{flex-direction:column;}.bex{width:100%;text-align:center;}.qrow{gap:3px;}.qt{font-size:9px;padding:2px 6px;}}
 </style>
 </head>
 <body>
@@ -212,10 +213,15 @@ textarea.mta:focus{outline:none;border-color:var(--a);}
     </div>
     <div class="ssec">
       <div class="slabel">類型</div>
-      <div class="nav-item" onclick="filterByType('tool')"><span class="ndot" style="background:var(--c)"></span>工具類</div>
-      <div class="nav-item" onclick="filterByType('concept')"><span class="ndot" style="background:var(--c);opacity:.5"></span>概念類</div>
+      <div class="nav-item" onclick="filterByType('tool')"><span class="ndot" style="background:var(--a)"></span>工具類</div>
+      <div class="nav-item" onclick="filterByType('concept')"><span class="ndot" style="background:var(--c);opacity:.6"></span>概念類</div>
       <div class="nav-item" onclick="filterByType('apply')"><span class="ndot" style="background:var(--d)"></span>可應用</div>
-      <div class="nav-item" onclick="filterByType(null)"><span class="ndot" style="background:var(--txd)"></span>全部顯示</div>
+      <div class="nav-item" onclick="filterByType('insight')"><span class="ndot" style="background:var(--c)"></span>洞察</div>
+      <div class="nav-item" onclick="filterByType('question')"><span class="ndot" style="background:var(--b)"></span>問題</div>
+      <div class="nav-item" onclick="filterByType('reference')"><span class="ndot" style="background:var(--txd)"></span>參考</div>
+      <div class="nav-item" onclick="filterByType('dialogue')"><span class="ndot" style="background:var(--a);opacity:.6"></span>對話</div>
+      <div class="nav-item" onclick="filterByType('review')"><span class="ndot" style="background:#4caf7d"></span>回顧</div>
+      <div class="nav-item" onclick="filterByType(null)"><span class="ndot" style="background:var(--txd);opacity:.4"></span>全部顯示</div>
     </div>
     <div class="ssec">
       <div class="slabel">摘要</div>
@@ -472,15 +478,8 @@ function initFirebase(){
 function handleLogin(){
   if(!window._auth)return;
   var provider=new window._fb.GoogleAuthProvider();
-  var isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  if(isMobile){
-    window._fb.signInWithRedirect(window._auth,provider);
-  } else {
-    window._fb.signInWithPopup(window._auth,provider).catch(function(e){
-      // Fallback to redirect if popup fails
-      window._fb.signInWithRedirect(window._auth,provider);
-    });
-  }
+  // Always use redirect - works on all devices including mobile browsers and WebViews
+  window._fb.signInWithRedirect(window._auth,provider);
 }
 function handleLogout(){
   if(!window._auth)return;
@@ -609,6 +608,129 @@ async function runWeeklySummary(){
     if(db)await fbSave(sn);else{nodes.unshift(sn);renderAll();}
     toast('週摘要已產生 ✓');
   }catch{toast('週摘要產生失敗');}
+}
+
+// ── REVIEW ──
+var _reviewText = '';
+var _reviewRange = '';
+
+function showReviewPanel(){
+  var p=document.getElementById('reviewPanel');
+  if(!p)return;
+  p.style.display=p.style.display==='none'||p.style.display===''?'block':'none';
+}
+function hideReviewPanel(){
+  var p=document.getElementById('reviewPanel');
+  if(p)p.style.display='none';
+}
+function onReviewPreset(){
+  var v=document.getElementById('reviewPreset').value;
+  var row=document.getElementById('customDateRow');
+  if(row)row.style.display=v==='custom'?'flex':'none';
+}
+function getReviewNodes(){
+  var preset=document.getElementById('reviewPreset').value;
+  var now=new Date();
+  var from, to=new Date();
+  if(preset==='custom'){
+    var f=document.getElementById('reviewFrom').value;
+    var t=document.getElementById('reviewTo').value;
+    if(!f||!t){toast('請選擇日期區間');return null;}
+    from=new Date(f);to=new Date(t);to.setHours(23,59,59);
+  } else {
+    var days=parseInt(preset);
+    from=new Date(now.getTime()-days*24*60*60*1000);
+  }
+  var filtered=nodes.filter(function(n){
+    if(!n.createdAt)return false;
+    var d=new Date(n.createdAt);
+    return d>=from&&d<=to;
+  });
+  var fromStr=from.toLocaleDateString('zh-TW');
+  var toStr=to.toLocaleDateString('zh-TW');
+  var label=preset==='custom'
+    ?document.getElementById('reviewFrom').value+' → '+document.getElementById('reviewTo').value
+    :'過去 '+preset+' 天（'+fromStr+' → '+toStr+'）';
+  return {nodes:filtered,label:label,isQuarter:preset==='90'};
+}
+async function runReview(){
+  if(!nodes.length){toast('節點庫是空的');return;}
+  var result=getReviewNodes();
+  if(!result)return;
+  if(!result.nodes.length){toast('這段區間內沒有節點');return;}
+  var hdr=document.getElementById('reviewHdr');
+  var rc=document.getElementById('reviewContent');
+  var rd=document.getElementById('reviewResult');
+  hdr.textContent='回顧生成中…';
+  rd.style.display='block';
+  rc.textContent='';
+  _reviewRange=result.label;
+  var summaryText=result.nodes.map(function(n){
+    return '['+( n.track||'both')+']['+((n.tags||[]).join(','))+'] '+n.title+'：'+n.excerpt;
+  }).join('
+');
+  var isQuarter=result.isQuarter;
+  var quarterSection=isQuarter?'
+
+【季度 Odyssey 對照】
+這段時間的行動，是否靠近長期目標方向':'';
+  try{
+    var res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,
+        system:'你是 Vivian 的個人知識助理。Vivian 是 HanchorBio CMC Executive Director，同時建立 Fire by Design 個人品牌，有豐富的生活感悟記錄。根據她這段時間的節點，用以下固定格式產出回顧（繁體中文）：
+
+【這段時間的主軸】
+2-3 個核心主題
+
+【浮現的模式】
+跨節點出現的重複想法或感受
+
+【未解的問題】
+question 標籤的節點，或還沒有答案的懸念
+
+【可行動項目】
+具體可做的事，不超過 3 條
+
+【值得深化的洞察】
+最有潛力繼續發展的 1-2 個想法'+quarterSection,
+        messages:[{role:'user',content:'回顧區間：'+result.label+'
+
+節點清單：
+'+summaryText}]})
+    });
+    var data=await res.json();
+    var t2=data.content&&data.content.find(function(c){return c.type==='text';});
+    _reviewText=t2?t2.text:'無法產生回顧';
+    hdr.textContent='回顧完成 — '+result.label;
+    rc.textContent=_reviewText;
+  }catch(e){
+    _reviewText='回顧產生失敗，請稍後再試。';
+    hdr.textContent='發生錯誤';
+    rc.textContent=_reviewText;
+    toast('回顧產生失敗');
+  }
+}
+async function saveReviewAsCard(){
+  if(!_reviewText)return;
+  var preset=document.getElementById('reviewPreset').value;
+  var title=(preset==='90'?'季度回顧 ':'回顧 ')+new Date().toLocaleDateString('zh-TW');
+  var sn={
+    title:title,
+    excerpt:_reviewText.slice(0,80)+'…',
+    tags:['review'],
+    track:'both',
+    sourceLabel:'Insight OS 回顧',
+    sourceUrl:'',
+    createdAt:new Date().toISOString(),
+    rawInput:_reviewText,
+    imageUrl:'',
+    connections:0
+  };
+  if(db)await fbSave(sn);
+  else{nodes.unshift(sn);renderAll();}
+  toast('回顧已存成卡片 ✓');
+  hideReviewPanel();
 }
 
 // ── RENDER ──
