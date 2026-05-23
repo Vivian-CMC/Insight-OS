@@ -4,42 +4,40 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Insight OS</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#edf0f5;--s2:#fff;--bdr:rgba(90,110,150,0.13);--bdm:rgba(90,110,150,0.22);--tx:#28304a;--txm:#5a6480;--txd:#96a0b8;--a:#4a7fc1;--b:#c17a4a;--c:#6a7fc1;--d:#b84a6a;}
+:root{--bg:#edf0f5;--s2:#fff;--bdr:rgba(90,110,150,.13);--bdm:rgba(90,110,150,.22);--tx:#28304a;--txm:#5a6480;--txd:#96a0b8;--a:#4a7fc1;--b:#c17a4a;--c:#6a7fc1;--d:#b84a6a;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg);color:var(--tx);font-family:'Noto Sans TC',system-ui,sans-serif;font-weight:300;min-height:100vh;}
 .shell{display:grid;grid-template-columns:200px 1fr;grid-template-rows:50px 1fr;min-height:100vh;}
-/* TOPBAR */
 .topbar{grid-column:1/-1;display:flex;align-items:center;padding:0 20px;gap:12px;background:var(--s2);border-bottom:1px solid var(--bdr);position:sticky;top:0;z-index:100;}
-.logo{font-family:'DM Serif Display',serif;font-size:16px;letter-spacing:.03em;color:var(--tx);}
+.logo{font-family:'DM Serif Display',serif;font-size:16px;color:var(--tx);}
 .logo span{color:var(--a);}
 .tsep{flex:1;}
 .fstatus{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--txd);}
 .sdot{width:6px;height:6px;border-radius:50%;background:var(--txd);}
 .sdot.ok{background:#4caf7d;}
+#loginBtn{font-size:10px;padding:4px 12px;border-radius:20px;border:1px solid var(--a);background:rgba(74,127,193,.08);color:var(--a);cursor:pointer;font-family:inherit;}
+#logoutBtn{font-size:10px;padding:4px 12px;border-radius:20px;border:1px solid var(--bdm);background:none;color:var(--txm);cursor:pointer;font-family:inherit;display:none;}
 .ttag{font-size:9px;color:var(--txd);letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--bdm);padding:3px 8px;border-radius:20px;}
-/* SIDEBAR */
 .sidebar{background:var(--s2);border-right:1px solid var(--bdr);padding:16px 0;overflow-y:auto;}
 .slabel{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--txd);padding:0 14px 5px;}
 .ssec{margin-bottom:20px;}
-.nav-item{display:flex;align-items:center;gap:8px;padding:7px 14px;cursor:pointer;color:var(--txm);font-size:12px;transition:all .15s;border-left:2px solid transparent;}
-.nav-item:hover{color:var(--tx);background:var(--bg);}
-.nav-item.active{color:var(--a);background:rgba(74,127,193,.07);border-left-color:var(--a);}
+.ni{display:flex;align-items:center;gap:8px;padding:7px 14px;cursor:pointer;color:var(--txm);font-size:12px;transition:all .15s;border-left:2px solid transparent;}
+.ni:hover{color:var(--tx);background:var(--bg);}
+.ni.active{color:var(--a);background:rgba(74,127,193,.07);border-left-color:var(--a);}
 .ndot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
 .tpills{padding:0 9px;display:flex;flex-direction:column;gap:5px;}
-.tpill{display:flex;align-items:center;justify-content:space-between;padding:7px 9px;border-radius:7px;border:1px solid var(--bdr);cursor:pointer;font-size:11px;color:var(--txm);background:var(--bg);transition:all .15s;}
-.tpill:hover{border-color:var(--bdm);color:var(--tx);}
-.tpill.cmc{border-left:3px solid var(--a);}
-.tpill.fire{border-left:3px solid var(--b);}
+.tpill{display:flex;align-items:center;justify-content:space-between;padding:7px 9px;border-radius:7px;border:1px solid var(--bdr);cursor:pointer;font-size:11px;color:var(--txm);background:var(--bg);}
+.tpill.w{border-left:3px solid var(--a);}
+.tpill.b{border-left:3px solid var(--b);}
+.tpill.l{border-left:3px solid var(--c);}
 .tcnt{font-size:10px;color:var(--txd);background:var(--s2);padding:1px 6px;border-radius:10px;}
-/* MAIN */
 .main{display:flex;flex-direction:column;overflow:hidden;}
-/* CAPTURE */
 .cz{background:var(--s2);border-bottom:1px solid var(--bdr);padding:13px 20px 11px;}
 .czlb{font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--txd);margin-bottom:6px;}
 .crow{display:flex;gap:7px;align-items:flex-start;}
-textarea.cinp{flex:1;background:var(--bg);border:1px solid var(--bdm);border-radius:7px;padding:8px 11px;color:var(--tx);resize:none;min-height:40px;max-height:110px;line-height:1.55;font-size:12px;font-family:inherit;font-weight:300;transition:border-color .2s;}
+textarea.cinp{flex:1;background:var(--bg);border:1px solid var(--bdm);border-radius:7px;padding:8px 11px;color:var(--tx);resize:none;min-height:40px;max-height:110px;line-height:1.55;font-size:12px;font-family:inherit;font-weight:300;}
 textarea.cinp:focus{outline:none;border-color:var(--a);}
 textarea.cinp::placeholder{color:var(--txd);}
 .bex{background:var(--a);color:#fff;border:none;border-radius:7px;padding:9px 14px;font-size:11px;font-weight:500;cursor:pointer;white-space:nowrap;align-self:flex-start;font-family:inherit;}
@@ -47,7 +45,7 @@ textarea.cinp::placeholder{color:var(--txd);}
 .ubar{display:none;align-items:center;gap:5px;margin-top:6px;padding:4px 9px;background:rgba(106,127,193,.07);border:1px solid rgba(106,127,193,.18);border-radius:5px;font-size:10px;color:var(--c);}
 .ubar.on{display:flex;}
 .utx{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.ux{cursor:pointer;opacity:.5;font-size:14px;padding:0 2px;}
+.ux{cursor:pointer;opacity:.5;font-size:14px;}
 .ux:hover{opacity:1;}
 .qrow{display:flex;gap:4px;flex-wrap:wrap;align-items:center;margin-top:7px;}
 .ql{font-size:9px;color:var(--txd);letter-spacing:.1em;text-transform:uppercase;flex-shrink:0;}
@@ -59,7 +57,6 @@ textarea.cinp::placeholder{color:var(--txd);}
 .qadd-inp.on{display:inline-block;}
 .qadd-ok{font-size:10px;padding:2px 8px;border-radius:20px;background:var(--a);color:#fff;border:none;cursor:pointer;display:none;font-family:inherit;}
 .qadd-ok.on{display:inline-block;}
-/* EXTRACT PANEL */
 .ep{background:#f0f4fb;border-bottom:1px solid var(--bdr);padding:10px 20px;display:none;}
 .ep.on{display:block;}
 .eh{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--a);margin-bottom:7px;display:flex;align-items:center;gap:5px;}
@@ -70,7 +67,15 @@ textarea.cinp::placeholder{color:var(--txd);}
 .ct{font-size:8px;letter-spacing:.07em;text-transform:uppercase;padding:1px 4px;border-radius:3px;background:rgba(106,127,193,.12);color:var(--c);}
 .bsv2{margin-top:8px;background:none;border:1px solid var(--a);color:var(--a);border-radius:6px;padding:5px 12px;font-size:11px;cursor:pointer;font-family:inherit;}
 .bsv2:hover{background:rgba(74,127,193,.08);}
-/* MODAL */
+.rv-panel{background:#f0f4fb;border-bottom:1px solid var(--bdr);padding:12px 20px;display:none;}
+.rv-panel.on{display:block;}
+.rv-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:9px;}
+.rv-sel{font-size:11px;padding:4px 9px;border:1px solid var(--bdm);border-radius:6px;background:var(--bg);color:var(--tx);font-family:inherit;}
+.rv-btn{font-size:11px;padding:5px 14px;border-radius:6px;background:var(--a);color:#fff;border:none;cursor:pointer;font-family:inherit;}
+.rv-close{font-size:11px;padding:5px 10px;border-radius:6px;background:none;border:1px solid var(--bdm);color:var(--txm);cursor:pointer;font-family:inherit;}
+.rv-result{background:var(--s2);border:1px solid var(--bdr);border-radius:8px;padding:14px;font-size:12px;line-height:1.8;white-space:pre-wrap;max-height:300px;overflow-y:auto;margin-top:8px;}
+.rv-save{margin-top:8px;background:none;border:1px solid var(--a);color:var(--a);border-radius:6px;padding:5px 13px;font-size:11px;cursor:pointer;font-family:inherit;}
+.rv-save:hover{background:rgba(74,127,193,.08);}
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(40,48,74,.32);z-index:200;align-items:center;justify-content:center;padding:20px;}
 .modal-bg.on{display:flex;}
 .mbox{background:var(--s2);border:1px solid var(--bdm);border-radius:12px;width:100%;max-width:540px;max-height:85vh;overflow-y:auto;padding:20px;position:relative;}
@@ -96,42 +101,38 @@ textarea.mta:focus{outline:none;border-color:var(--a);}
 .bdel-no{background:none;border:1px solid var(--bdm);color:var(--txm);border-radius:6px;padding:5px 9px;font-size:11px;cursor:pointer;font-family:inherit;}
 .bsave{background:var(--a);color:#fff;border:none;border-radius:6px;padding:5px 14px;font-size:11px;font-weight:500;cursor:pointer;font-family:inherit;}
 .bsave:hover{opacity:.85;}
-/* CONTENT */
-.content-area{flex:1;overflow-y:auto;padding:16px 20px;}
+.ca{flex:1;overflow-y:auto;padding:16px 20px;}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:16px;}
 .sc{background:var(--s2);border:1px solid var(--bdr);border-radius:9px;padding:12px 14px;position:relative;overflow:hidden;}
 .sc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;}
-.sc.t::after{background:var(--c)}.sc.ca::after{background:var(--a)}.sc.fi::after{background:var(--b)}.sc.ap::after{background:var(--d)}
+.sc.t::after{background:var(--c)}.sc.w::after{background:var(--a)}.sc.b::after{background:var(--b)}.sc.l::after{background:var(--c)}
 .sn{font-family:'DM Serif Display',serif;font-size:24px;line-height:1;margin-bottom:3px;}
-.sc.t .sn{color:var(--c)}.sc.ca .sn{color:var(--a)}.sc.fi .sn{color:var(--b)}.sc.ap .sn{color:var(--d)}
-.sl{font-size:10px;color:var(--txd);letter-spacing:.05em;}
+.sc.t .sn{color:var(--c)}.sc.w .sn{color:var(--a)}.sc.b .sn{color:var(--b)}.sc.l .sn{color:var(--c)}
+.sl{font-size:10px;color:var(--txd);}
 .frow{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
 .ftit{font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--txd);}
-.fbtns{display:flex;gap:4px;}
+.fbtns{display:flex;gap:4px;flex-wrap:wrap;}
 .fb{font-size:10px;padding:2px 9px;border-radius:20px;border:1px solid var(--bdr);background:none;color:var(--txd);cursor:pointer;font-family:inherit;}
 .fb:hover{color:var(--txm);}
 .fb.on{border-color:var(--a);color:var(--a);background:rgba(74,127,193,.08);}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;}
-.card{background:var(--s2);border:1px solid var(--bdr);border-radius:10px;padding:13px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden;animation:cardIn .25s ease both;}
+.card{background:var(--s2);border:1px solid var(--bdr);border-radius:10px;padding:13px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden;}
 .card:hover{border-color:var(--bdm);transform:translateY(-1px);box-shadow:0 4px 14px rgba(74,100,160,.07);}
-@keyframes cardIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 .card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
-.card.work::before{background:#4a7fc1;opacity:.55}
-.card.build::before{background:#c17a4a;opacity:.55}
-.card.life::before{background:#6a7fc1;opacity:.55}
-.card.both::before{background:linear-gradient(90deg,#4a7fc1,#6a7fc1);opacity:.65}
+.card.work::before{background:var(--a);opacity:.55}
+.card.build::before{background:var(--b);opacity:.55}
+.card.life::before{background:var(--c);opacity:.55}
+.card.both::before{background:linear-gradient(90deg,var(--a),var(--c));opacity:.65}
 .ctags{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:7px;}
 .ctag{font-size:8px;letter-spacing:.07em;text-transform:uppercase;padding:1px 5px;border-radius:3px;}
 .ctag.tool,.ctag.concept{background:rgba(106,127,193,.1);color:var(--c);border:1px solid rgba(106,127,193,.18);}
 .ctag.apply{background:rgba(184,74,106,.08);color:var(--d);border:1px solid rgba(184,74,106,.15);}
-.ctag.t-cmc{background:rgba(74,127,193,.08);color:var(--a);border:1px solid rgba(74,127,193,.15);}
-.ctag.t-fire{background:rgba(193,122,74,.08);color:var(--b);border:1px solid rgba(193,122,74,.15);}
-.ctag.custom{background:rgba(106,127,193,.06);color:var(--c);border:1px solid rgba(106,127,193,.12);}
 .ctag.insight{background:rgba(106,127,193,.08);color:var(--c);border:1px solid rgba(106,127,193,.15);}
 .ctag.question{background:rgba(193,122,74,.08);color:var(--b);border:1px solid rgba(193,122,74,.15);}
 .ctag.reference{background:rgba(150,160,184,.08);color:var(--txm);border:1px solid rgba(150,160,184,.2);}
 .ctag.dialogue{background:rgba(74,127,193,.06);color:var(--a);border:1px solid rgba(74,127,193,.12);}
 .ctag.review{background:rgba(76,175,125,.08);color:#4caf7d;border:1px solid rgba(76,175,125,.2);}
+.ctag.custom{background:rgba(106,127,193,.06);color:var(--c);border:1px solid rgba(106,127,193,.12);}
 .ctag.t-work{background:rgba(74,127,193,.08);color:var(--a);border:1px solid rgba(74,127,193,.15);}
 .ctag.t-build{background:rgba(193,122,74,.08);color:var(--b);border:1px solid rgba(193,122,74,.15);}
 .ctag.t-life{background:rgba(106,127,193,.08);color:var(--c);border:1px solid rgba(106,127,193,.15);}
@@ -139,51 +140,24 @@ textarea.mta:focus{outline:none;border-color:var(--a);}
 .cex{font-size:11px;color:var(--txm);line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
 .cft{display:flex;align-items:center;justify-content:space-between;margin-top:9px;padding-top:7px;border-top:1px solid var(--bdr);gap:4px;}
 .csrc{font-size:9px;color:var(--txd);text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:110px;opacity:.6;}
-.csrc:hover{text-decoration:underline;opacity:1;}
+.csrc:hover{opacity:1;}
 .csrct{font-size:9px;color:var(--txd);opacity:.5;}
 .cdt{font-size:9px;color:var(--txd);}
 .empty{text-align:center;padding:40px;color:var(--txd);}
-/* FLOW */
-.flow-diagram{background:var(--s2);border:1px solid var(--bdr);border-radius:11px;padding:20px;overflow-x:auto;margin-bottom:11px;}
-.ftitle{font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--txd);margin-bottom:16px;}
-.ftrack{display:flex;align-items:center;margin-bottom:13px;min-width:560px;}
-.fnode{display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0;}
-.fbox{border-radius:6px;padding:6px 12px;font-size:11px;text-align:center;border:1px solid var(--bdm);background:var(--bg);white-space:nowrap;color:var(--txm);}
-.fbox.inp{border-color:rgba(106,127,193,.4);color:var(--c);background:rgba(106,127,193,.05);}
-.fbox.proc{border-color:rgba(74,127,193,.4);color:var(--a);background:rgba(74,127,193,.05);}
-.fbox.ocmc{border-color:rgba(74,127,193,.3);color:var(--a);}
-.fbox.ofire{border-color:rgba(193,122,74,.3);color:var(--b);}
-.fbox.oboth{border-color:rgba(74,127,193,.35);color:var(--c);}
-.fsub{font-size:9px;color:var(--txd);text-align:center;max-width:80px;line-height:1.4;}
-.fconn{flex:1;display:flex;align-items:center;min-width:14px;}
-.fline{flex:1;height:1px;background:var(--bdm);}
-.farr{width:0;height:0;border-top:3px solid transparent;border-bottom:3px solid transparent;border-left:5px solid var(--bdm);}
-.igrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;min-width:440px;}
-.icard{background:var(--bg);border:1px solid var(--bdr);border-radius:7px;padding:12px;}
-.ilabel{font-size:9px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px;}
-.ibody{font-size:11px;color:var(--txm);line-height:1.7;}
-/* CONFIG */
 .cfg-panel{background:var(--s2);border:1px solid var(--bdr);border-radius:11px;padding:20px;margin-bottom:14px;}
 .cfg-title{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--txd);margin-bottom:13px;}
 .cfg-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
-.cfg-field label{font-size:10px;color:var(--txd);display:block;margin-bottom:3px;letter-spacing:.05em;}
-.cfg-field input{width:100%;background:var(--bg);border:1px solid var(--bdm);border-radius:6px;padding:6px 9px;font-size:11px;color:var(--tx);font-family:'DM Mono',monospace;}
+.cfg-field label{font-size:10px;color:var(--txd);display:block;margin-bottom:3px;}
+.cfg-field input{width:100%;background:var(--bg);border:1px solid var(--bdm);border-radius:6px;padding:6px 9px;font-size:11px;color:var(--tx);font-family:monospace;}
 .cfg-field input:focus{outline:none;border-color:var(--a);}
 .bconn{background:var(--a);color:#fff;border:none;border-radius:7px;padding:8px 16px;font-size:11px;font-weight:500;cursor:pointer;margin-top:11px;font-family:inherit;}
-.bconn:hover{opacity:.88;}
-.cfg-note{font-size:10px;color:var(--txd);margin-top:9px;line-height:1.6;}
-/* TOAST */
 .toast{position:fixed;bottom:16px;right:16px;background:var(--s2);border:1px solid var(--a);border-radius:7px;padding:9px 14px;font-size:11px;color:var(--a);opacity:0;transform:translateY(7px);transition:all .2s;z-index:300;pointer-events:none;}
 .toast.on{opacity:1;transform:translateY(0);}
-.loading-dots span{animation:blink 1.2s infinite;opacity:0;}
-.loading-dots span:nth-child(2){animation-delay:.2s;}
-.loading-dots span:nth-child(3){animation-delay:.4s;}
-@keyframes blink{0%,80%,100%{opacity:0}40%{opacity:1}}
 ::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--bdm);border-radius:2px;}
 @media(max-width:600px){.shell{grid-template-columns:1fr;}.sidebar{display:none;}.stats{grid-template-columns:repeat(2,1fr);}}
-@media(max-width:480px){.crow{flex-direction:column;}.bex{width:100%;text-align:center;}.qrow{gap:3px;}.qt{font-size:9px;padding:2px 6px;}}
+@media(max-width:480px){.crow{flex-direction:column;}.bex{width:100%;text-align:center;}}
 </style>
 </head>
 <body>
@@ -192,40 +166,40 @@ textarea.mta:focus{outline:none;border-color:var(--a);}
     <div class="logo">Insight <span>OS</span></div>
     <span class="tsep"></span>
     <div class="fstatus"><div class="sdot" id="sdot"></div><span id="stxt">未登入</span></div>
-    <button id="loginBtn" onclick="handleLogin()" style="font-size:10px;padding:4px 12px;border-radius:20px;border:1px solid var(--a);background:var(--ga);color:var(--a);cursor:pointer;font-family:inherit;">Google 登入</button>
-    <button id="logoutBtn" onclick="handleLogout()" style="font-size:10px;padding:4px 12px;border-radius:20px;border:1px solid var(--bdm);background:none;color:var(--txm);cursor:pointer;font-family:inherit;display:none;">登出</button>
+    <button id="loginBtn" onclick="doLogin()">Google 登入</button>
+    <button id="logoutBtn" onclick="doLogout()">登出</button>
     <div class="ttag">v1.0</div>
   </header>
   <aside class="sidebar">
     <div class="ssec">
       <div class="slabel">視圖</div>
-      <div class="nav-item active" onclick="switchView('library',this)"><span class="ndot" style="background:var(--a)"></span>節點庫</div>
-      <div class="nav-item" onclick="switchView('flow',this)"><span class="ndot" style="background:var(--c)"></span>工作流程圖</div>
-      <div class="nav-item" onclick="switchView('settings',this)"><span class="ndot" style="background:var(--txd)"></span>Firebase 設定</div>
+      <div class="ni active" onclick="switchView('library',this)"><span class="ndot" style="background:var(--a)"></span>節點庫</div>
+      <div class="ni" onclick="switchView('flow',this)"><span class="ndot" style="background:var(--c)"></span>工作流程圖</div>
+      <div class="ni" onclick="switchView('settings',this)"><span class="ndot" style="background:var(--txd)"></span>Firebase 設定</div>
     </div>
     <div class="ssec">
       <div class="slabel">Track</div>
       <div class="tpills">
-        <div class="tpill cmc" onclick="filterByTrack('work')"><span>Work</span><span class="tcnt" id="cnt-work">0</span></div>
-        <div class="tpill fire" onclick="filterByTrack('build')"><span>Build</span><span class="tcnt" id="cnt-build">0</span></div>
-        <div class="tpill" style="border-left:3px solid #6a7fc1" onclick="filterByTrack('life')"><span>Life</span><span class="tcnt" id="cnt-life">0</span></div>
+        <div class="tpill w" onclick="filterTrack('work')"><span>Work</span><span class="tcnt" id="cnt-w">0</span></div>
+        <div class="tpill b" onclick="filterTrack('build')"><span>Build</span><span class="tcnt" id="cnt-b">0</span></div>
+        <div class="tpill l" onclick="filterTrack('life')"><span>Life</span><span class="tcnt" id="cnt-l">0</span></div>
       </div>
     </div>
     <div class="ssec">
       <div class="slabel">類型</div>
-      <div class="nav-item" onclick="filterByType('tool')"><span class="ndot" style="background:var(--a)"></span>工具類</div>
-      <div class="nav-item" onclick="filterByType('concept')"><span class="ndot" style="background:var(--c);opacity:.6"></span>概念類</div>
-      <div class="nav-item" onclick="filterByType('apply')"><span class="ndot" style="background:var(--d)"></span>可應用</div>
-      <div class="nav-item" onclick="filterByType('insight')"><span class="ndot" style="background:var(--c)"></span>洞察</div>
-      <div class="nav-item" onclick="filterByType('question')"><span class="ndot" style="background:var(--b)"></span>問題</div>
-      <div class="nav-item" onclick="filterByType('reference')"><span class="ndot" style="background:var(--txd)"></span>參考</div>
-      <div class="nav-item" onclick="filterByType('dialogue')"><span class="ndot" style="background:var(--a);opacity:.6"></span>對話</div>
-      <div class="nav-item" onclick="filterByType('review')"><span class="ndot" style="background:#4caf7d"></span>回顧</div>
-      <div class="nav-item" onclick="filterByType(null)"><span class="ndot" style="background:var(--txd);opacity:.4"></span>全部顯示</div>
+      <div class="ni" onclick="filterType('tool')"><span class="ndot" style="background:var(--a)"></span>工具類</div>
+      <div class="ni" onclick="filterType('concept')"><span class="ndot" style="background:var(--c);opacity:.6"></span>概念類</div>
+      <div class="ni" onclick="filterType('apply')"><span class="ndot" style="background:var(--d)"></span>可應用</div>
+      <div class="ni" onclick="filterType('insight')"><span class="ndot" style="background:var(--c)"></span>洞察</div>
+      <div class="ni" onclick="filterType('question')"><span class="ndot" style="background:var(--b)"></span>問題</div>
+      <div class="ni" onclick="filterType('reference')"><span class="ndot" style="background:var(--txd)"></span>參考</div>
+      <div class="ni" onclick="filterType('dialogue')"><span class="ndot" style="background:var(--a);opacity:.6"></span>對話</div>
+      <div class="ni" onclick="filterType('review')"><span class="ndot" style="background:#4caf7d"></span>回顧</div>
+      <div class="ni" onclick="filterType(null)"><span class="ndot" style="background:var(--txd);opacity:.4"></span>全部顯示</div>
     </div>
     <div class="ssec">
       <div class="slabel">摘要</div>
-      <div class="nav-item" onclick="showReviewPanel()"><span class="ndot" style="background:var(--b)"></span>回顧 / 摘要</div>
+      <div class="ni" onclick="toggleReview()"><span class="ndot" style="background:var(--b)"></span>回顧 / 摘要</div>
     </div>
   </aside>
   <main class="main">
@@ -233,9 +207,9 @@ textarea.mta:focus{outline:none;border-color:var(--a);}
       <div class="czlb">快速收錄</div>
       <div class="crow">
         <div style="flex:1">
-          <textarea class="cinp" id="inp" placeholder="貼入文章摘要、URL、想法片段……URL 會自動偵測。按 Ctrl+Enter 萃取" rows="2" oninput="onInp(this)" onkeydown="onKD(event)"></textarea>
+          <textarea class="cinp" id="inp" placeholder="貼入文章摘要、URL、想法片段……URL 自動偵測。Ctrl+Enter 萃取" rows="2" oninput="onInp(this)" onkeydown="onKD(event)"></textarea>
           <div class="ubar" id="ubar">
-            <span style="font-size:9px;letter-spacing:.08em;text-transform:uppercase;opacity:.6;flex-shrink:0">來源</span>
+            <span style="font-size:9px;opacity:.6;flex-shrink:0">來源</span>
             <span class="utx" id="utx"></span>
             <span class="ux" onclick="clearUrl()">×</span>
           </div>
@@ -253,9 +227,9 @@ textarea.mta:focus{outline:none;border-color:var(--a);}
             <button class="qt" id="qt-life" onclick="togQt(this,'life')">Life</button>
             <span id="custEl"></span>
             <span class="qadd-wrap">
-              <button class="qadd" id="qaddBtn" onclick="showAddInp()">＋</button>
-              <input class="qadd-inp" id="qaddInp" placeholder="標記名稱" onkeydown="qaddKD(event)">
-              <button class="qadd-ok" id="qaddOk" onclick="confirmAddTag()">確定</button>
+              <button class="qadd" id="qaddBtn" onclick="showAdd()">＋</button>
+              <input class="qadd-inp" id="qaddInp" placeholder="標記名稱" onkeydown="addKD(event)">
+              <button class="qadd-ok" id="qaddOk" onclick="confirmAdd()">確定</button>
             </span>
           </div>
         </div>
@@ -267,105 +241,79 @@ textarea.mta:focus{outline:none;border-color:var(--a);}
       <div class="chips" id="echips"></div>
       <button class="bsv2" id="esave" onclick="saveAll()" style="display:none">＋ 全部加入節點庫</button>
     </div>
-    <!-- REVIEW PANEL -->
-    <div class="ep" id="reviewPanel" style="display:none">
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
+    <div class="rv-panel" id="rvPanel">
+      <div class="rv-row">
         <span style="font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--a)">回顧區間</span>
-        <select id="reviewPreset" onchange="onReviewPreset()" style="font-size:11px;padding:3px 8px;border:1px solid var(--bdm);border-radius:6px;background:var(--bg);color:var(--tx);font-family:inherit;">
+        <select class="rv-sel" id="rvPreset" onchange="onRvPreset()">
           <option value="7">過去 7 天</option>
           <option value="30">過去 30 天</option>
           <option value="90">過去 90 天（季度）</option>
           <option value="custom">自訂區間</option>
         </select>
-        <span id="customDateRow" style="display:none;align-items:center;gap:5px;font-size:11px;">
-          <input type="date" id="reviewFrom" style="font-size:11px;padding:3px 7px;border:1px solid var(--bdm);border-radius:6px;background:var(--bg);color:var(--tx);">
+        <span id="rvCustom" style="display:none;align-items:center;gap:5px">
+          <input type="date" id="rvFrom" class="rv-sel">
           <span style="color:var(--txd)">→</span>
-          <input type="date" id="reviewTo" style="font-size:11px;padding:3px 7px;border:1px solid var(--bdm);border-radius:6px;background:var(--bg);color:var(--tx);">
+          <input type="date" id="rvTo" class="rv-sel">
         </span>
-        <button onclick="runReview()" style="font-size:11px;padding:4px 14px;border-radius:6px;background:var(--a);color:#fff;border:none;cursor:pointer;font-family:inherit;">產生回顧</button>
-        <button onclick="hideReviewPanel()" style="font-size:11px;padding:4px 10px;border-radius:6px;background:none;border:1px solid var(--bdm);color:var(--txm);cursor:pointer;font-family:inherit;">收起</button>
+        <button class="rv-btn" onclick="runReview()">產生回顧</button>
+        <button class="rv-close" onclick="toggleReview()">收起</button>
       </div>
-      <div id="reviewResult" style="display:none">
-        <div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--a);margin-bottom:7px" id="reviewHdr"></div>
-        <div id="reviewContent" style="font-size:12px;color:var(--tx);line-height:1.8;white-space:pre-wrap;background:var(--s2);border:1px solid var(--bdr);border-radius:8px;padding:14px;max-height:320px;overflow-y:auto;"></div>
-        <button onclick="saveReviewAsCard()" style="margin-top:9px;font-size:11px;padding:5px 14px;border-radius:6px;background:none;border:1px solid var(--a);color:var(--a);cursor:pointer;font-family:inherit;">＋ 存成回顧卡片</button>
+      <div id="rvResultWrap" style="display:none">
+        <div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--a);margin-bottom:5px" id="rvHdr"></div>
+        <div class="rv-result" id="rvContent"></div>
+        <button class="rv-save" onclick="saveReview()">＋ 存成回顧卡片</button>
       </div>
     </div>
-    <div class="content-area" id="contentArea">
+    <div class="ca" id="ca">
       <div id="libraryView">
         <div class="stats">
           <div class="sc t"><div class="sn" id="sT">0</div><div class="sl">總節點數</div></div>
-          <div class="sc ca"><div class="sn" id="sC">0</div><div class="sl">Work</div></div>
-          <div class="sc fi"><div class="sn" id="sF">0</div><div class="sl">Build</div></div>
-          <div class="sc" style="border:1px solid var(--bdr);border-radius:9px;padding:12px 14px;position:relative;overflow:hidden;"><div class="sn" id="sL" style="color:#6a7fc1;font-family:'DM Serif Display',serif;font-size:24px;line-height:1;margin-bottom:3px;">0</div><div class="sl">Life</div><div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:#6a7fc1"></div></div>
+          <div class="sc w"><div class="sn" id="sW">0</div><div class="sl">Work</div></div>
+          <div class="sc b"><div class="sn" id="sB">0</div><div class="sl">Build</div></div>
+          <div class="sc l"><div class="sn" id="sL">0</div><div class="sl">Life</div></div>
         </div>
         <div class="frow">
           <div class="ftit">節點庫</div>
           <div class="fbtns">
-            <button class="fb on" id="fb-all" onclick="filterByType(null)">全部</button>
-            <button class="fb" id="fb-tool" onclick="filterByType('tool')">工具</button>
-            <button class="fb" id="fb-concept" onclick="filterByType('concept')">概念</button>
-            <button class="fb" id="fb-apply" onclick="filterByType('apply')">可應用</button>
-            <button class="fb" id="fb-insight" onclick="filterByType('insight')">洞察</button>
-            <button class="fb" id="fb-question" onclick="filterByType('question')">問題</button>
-            <button class="fb" id="fb-dialogue" onclick="filterByType('dialogue')">對話</button>
-            <button class="fb" id="fb-review" onclick="filterByType('review')">回顧</button>
+            <button class="fb on" id="fb-all" onclick="filterType(null)">全部</button>
+            <button class="fb" id="fb-tool" onclick="filterType('tool')">工具</button>
+            <button class="fb" id="fb-concept" onclick="filterType('concept')">概念</button>
+            <button class="fb" id="fb-apply" onclick="filterType('apply')">可應用</button>
+            <button class="fb" id="fb-insight" onclick="filterType('insight')">洞察</button>
+            <button class="fb" id="fb-question" onclick="filterType('question')">問題</button>
+            <button class="fb" id="fb-dialogue" onclick="filterType('dialogue')">對話</button>
+            <button class="fb" id="fb-review" onclick="filterType('review')">回顧</button>
           </div>
         </div>
         <div class="grid" id="grid"></div>
       </div>
       <div id="flowView" style="display:none">
-        <div class="flow-diagram">
-          <div class="ftitle">工作流程架構</div>
-          <div style="font-size:9px;color:var(--txd);letter-spacing:.09em;text-transform:uppercase;margin-bottom:7px">輸入層</div>
-          <div class="ftrack">
-            <div class="fnode"><div class="fbox inp">貼入任意內容</div><div class="fsub">URL 自動偵測</div></div>
-            <div class="fconn"><div class="fline"></div><div class="farr"></div></div>
-            <div class="fnode"><div class="fbox inp">快速標記</div><div class="fsub">Track 預設</div></div>
-            <div class="fconn"><div class="fline"></div><div class="farr"></div></div>
-            <div class="fnode"><div class="fbox proc">Claude 萃取</div><div class="fsub">節點 + 分類</div></div>
-            <div class="fconn"><div class="fline"></div><div class="farr"></div></div>
-            <div class="fnode"><div class="fbox oboth">Firebase 節點庫</div><div class="fsub">線上 / 跨裝置</div></div>
-          </div>
-          <div style="font-size:9px;color:var(--txd);letter-spacing:.09em;text-transform:uppercase;margin-top:13px;margin-bottom:7px">記憶層</div>
-          <div class="ftrack">
-            <div class="fnode"><div class="fbox oboth">節點庫</div></div>
-            <div class="fconn"><div class="fline"></div><div class="farr"></div></div>
-            <div class="fnode"><div class="fbox ocmc">GitHub Memory</div><div class="fsub">HCB101.md 等</div></div>
-            <div class="fconn"><div class="fline"></div><div class="farr"></div></div>
-            <div class="fnode"><div class="fbox ofire">Notion Heartbeat</div><div class="fsub">週回顧 + 草稿</div></div>
-          </div>
-        </div>
-        <div class="flow-diagram">
-          <div class="ftitle">三個方向整合地圖</div>
-          <div class="igrid">
-            <div class="icard" style="border-top:2px solid var(--a)"><div class="ilabel" style="color:var(--a)">方向 A · CMC Memory</div><div class="ibody">GitHub repo<br>版本控制 / 決策記憶<br><span style="color:var(--a)">← export from 節點庫</span></div></div>
-            <div class="icard" style="border-top:2px solid var(--c)"><div class="ilabel" style="color:var(--c)">方向 C · Insight OS</div><div class="ibody">本 App（樞紐）<br>Firebase 線上存儲<br><span style="color:var(--c)">↔ 橋接 A 和 B</span></div></div>
-            <div class="icard" style="border-top:2px solid var(--b)"><div class="ilabel" style="color:var(--b)">方向 B · Heartbeat</div><div class="ibody">Notion database<br>週回顧 + 內容草稿<br><span style="color:var(--b)">→ Fire by Design</span></div></div>
+        <div style="background:var(--s2);border:1px solid var(--bdr);border-radius:11px;padding:20px;margin-bottom:11px;">
+          <div style="font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--txd);margin-bottom:14px">三個方向整合地圖</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;min-width:400px">
+            <div style="background:var(--bg);border:1px solid var(--bdr);border-radius:8px;padding:13px;border-top:2px solid var(--a)"><div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--a);margin-bottom:8px">方向 A · Work Memory</div><div style="font-size:11px;color:var(--txm);line-height:1.7">GitHub repo<br>版本控制 / 決策記憶<br><span style="color:var(--a)">← export from 節點庫</span></div></div>
+            <div style="background:var(--bg);border:1px solid var(--bdr);border-radius:8px;padding:13px;border-top:2px solid var(--c)"><div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--c);margin-bottom:8px">方向 C · Insight OS</div><div style="font-size:11px;color:var(--txm);line-height:1.7">本 App（樞紐）<br>Firebase 線上存儲<br><span style="color:var(--c)">↔ 橋接 A 和 B</span></div></div>
+            <div style="background:var(--bg);border:1px solid var(--bdr);border-radius:8px;padding:13px;border-top:2px solid var(--b)"><div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--b);margin-bottom:8px">方向 B · Heartbeat</div><div style="font-size:11px;color:var(--txm);line-height:1.7">Notion database<br>週回顧 + 內容草稿<br><span style="color:var(--b)">→ Fire by Design</span></div></div>
           </div>
         </div>
       </div>
       <div id="settingsView" style="display:none">
         <div class="cfg-panel">
-          <div class="cfg-title">Firebase 連線設定</div>
+          <div class="cfg-title">Firebase 連線設定（目前已內建，無需修改）</div>
           <div class="cfg-grid">
-            <div class="cfg-field"><label>API Key</label><input type="text" id="cfg-apiKey" placeholder="AIzaSy..."></div>
-            <div class="cfg-field"><label>Auth Domain</label><input type="text" id="cfg-authDomain" placeholder="your-app.firebaseapp.com"></div>
-            <div class="cfg-field"><label>Database URL</label><input type="text" id="cfg-databaseURL" placeholder="https://your-app-rtdb...firebasedatabase.app"></div>
-            <div class="cfg-field"><label>Project ID</label><input type="text" id="cfg-projectId" placeholder="your-project-id"></div>
-            <div class="cfg-field"><label>Storage Bucket</label><input type="text" id="cfg-storageBucket" placeholder="your-app.appspot.com"></div>
-            <div class="cfg-field"><label>App ID</label><input type="text" id="cfg-appId" placeholder="1:123456:web:abc..."></div>
+            <div class="cfg-field"><label>API Key</label><input type="text" id="cfg-apiKey" value="AIzaSyATSS91GrFSXXF1NLMis9Z_OELgWbxwaEw" readonly></div>
+            <div class="cfg-field"><label>Auth Domain</label><input type="text" id="cfg-authDomain" value="vivian-os.firebaseapp.com" readonly></div>
+            <div class="cfg-field"><label>Database URL</label><input type="text" id="cfg-databaseURL" value="https://vivian-os-default-rtdb.asia-southeast1.firebasedatabase.app" readonly></div>
+            <div class="cfg-field"><label>Project ID</label><input type="text" value="vivian-os" readonly></div>
           </div>
-          <button class="bconn" onclick="connectFirebase()">連線 Firebase</button>
-          <div class="cfg-note">設定儲存在本機 localStorage，下次開啟自動連線。</div>
+          <div style="font-size:10px;color:var(--txd);margin-top:10px">設定已內建，任何裝置開啟後點 Google 登入即可使用。</div>
         </div>
       </div>
     </div>
   </main>
 </div>
 
-<!-- MODAL -->
-<div class="modal-bg" id="modal" onclick="modalBgClick(event)">
+<div class="modal-bg" id="modal" onclick="modalBg(event)">
   <div class="mbox">
     <button class="mcl" onclick="closeModal()">×</button>
     <div class="ms"><div class="mfl">標題</div><input class="mi" id="mT" type="text"></div>
@@ -382,8 +330,7 @@ textarea.mta:focus{outline:none;border-color:var(--a);}
     <div class="mft">
       <div>
         <button class="bdel" id="delBtn" onclick="askDel()">刪除</button>
-        <span class="del-confirm" id="delConfirm">
-          確定刪除？
+        <span class="del-confirm" id="delConfirm">確定刪除？
           <button class="bdel-yes" onclick="doDelete()">確定</button>
           <button class="bdel-no" onclick="cancelDel()">取消</button>
         </span>
@@ -401,486 +348,413 @@ textarea.mta:focus{outline:none;border-color:var(--a);}
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getDatabase, ref, push, onValue, remove, update } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
-import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
-const FIREBASE_CFG = {
-  apiKey: "AIzaSyATSS91GrFSXXF1NLMis9Z_OELgWbxwaEw",
-  authDomain: "vivian-os.firebaseapp.com",
-  databaseURL: "https://vivian-os-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "vivian-os",
-  storageBucket: "vivian-os.firebasestorage.app",
-  appId: "1:741967247175:web:72ab527f8aa21842f4fe62"
+const CFG = {
+  apiKey:'AIzaSyATSS91GrFSXXF1NLMis9Z_OELgWbxwaEw',
+  authDomain:'vivian-os.firebaseapp.com',
+  databaseURL:'https://vivian-os-default-rtdb.asia-southeast1.firebasedatabase.app',
+  projectId:'vivian-os',
+  storageBucket:'vivian-os.firebasestorage.app',
+  appId:'1:741967247175:web:72ab527f8aa21842f4fe62'
 };
 
-const app = initializeApp(FIREBASE_CFG);
-const db_inst = getDatabase(app);
-const auth_inst = getAuth(app);
+const app = initializeApp(CFG);
+const DB = getDatabase(app);
+const AUTH = getAuth(app);
 
-// Expose to global scope for the main script
-window._db = db_inst;
-window._auth = auth_inst;
-window._fbFns = { ref, push, onValue, remove, update, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut, GoogleAuthProvider };
+// Expose DB ops globally
+window.DB = DB;
+window.fbRef = ref;
+window.fbPush = push;
+window.fbRemove = remove;
+window.fbUpdate = update;
 
-// Handle redirect result - process login after Google redirect
-getRedirectResult(auth_inst).then(function(result){
-  if(result && result.user){
-    console.log('Redirect login success:', result.user.displayName);
+// Handle redirect result FIRST before auth state fires
+getRedirectResult(AUTH).then(result => {
+  if (result && result.user) {
+    console.log('Logged in via redirect:', result.user.email);
   }
-}).catch(function(e){
-  if(e.code !== 'auth/no-current-user'){
-    console.log('Redirect error:', e.code, e.message);
-  }
+}).catch(err => {
+  console.log('getRedirectResult error (may be normal):', err.code);
 });
 
-// Auth state
-onAuthStateChanged(auth_inst, function(user){
-  if(user){
-    document.getElementById('sdot').classList.add('ok');
-    document.getElementById('stxt').textContent = user.displayName || '已登入';
-    document.getElementById('loginBtn').style.display = 'none';
-    document.getElementById('logoutBtn').style.display = '';
-    onValue(ref(db_inst,'cmc_nodes'), function(snap){
+// Auth state listener
+onAuthStateChanged(AUTH, user => {
+  const sdot = document.getElementById('sdot');
+  const stxt = document.getElementById('stxt');
+  const loginBtn = document.getElementById('loginBtn');
+  const logoutBtn = document.getElementById('logoutBtn');
+
+  if (user) {
+    sdot.classList.add('ok');
+    stxt.textContent = user.displayName || user.email || '已登入';
+    loginBtn.style.display = 'none';
+    logoutBtn.style.display = '';
+    // Start listening to data
+    onValue(ref(DB, 'cmc_nodes'), snap => {
       const data = snap.val();
-      if(data){
-        const newNodes = Object.entries(data).map(([id,v])=>({
-          ...v, firebaseId:id,
-          tags: Array.isArray(v.tags)?v.tags:Object.values(v.tags||{}),
-          track: v.track||'both'
-        }));
-        newNodes.sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''));
-        if(window._onNodesUpdate) window._onNodesUpdate(newNodes);
-      } else {
-        if(window._onNodesUpdate) window._onNodesUpdate([]);
-      }
+      const arr = data ? Object.entries(data).map(([id, v]) => ({
+        ...v,
+        firebaseId: id,
+        tags: Array.isArray(v.tags) ? v.tags : Object.values(v.tags || {}),
+        track: v.track || 'both'
+      })) : [];
+      arr.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+      window.nodes = arr;
+      if (typeof window.renderAll === 'function') window.renderAll();
     });
   } else {
-    document.getElementById('sdot').classList.remove('ok');
-    document.getElementById('stxt').textContent = '未登入';
-    document.getElementById('loginBtn').style.display = '';
-    document.getElementById('logoutBtn').style.display = 'none';
-    if(window._onNodesUpdate) window._onNodesUpdate([]);
+    sdot.classList.remove('ok');
+    stxt.textContent = '未登入';
+    loginBtn.style.display = '';
+    logoutBtn.style.display = 'none';
+    window.nodes = [];
+    if (typeof window.renderAll === 'function') window.renderAll();
   }
 });
 
-window.dispatchEvent(new Event('fb-module-ready'));
+// Login: try popup first, fall back to redirect
+window.doLogin = async function() {
+  const provider = new GoogleAuthProvider();
+  try {
+    await signInWithPopup(AUTH, provider);
+  } catch (err) {
+    // If popup blocked or not allowed, use redirect
+    if (err.code === 'auth/popup-blocked' ||
+        err.code === 'auth/popup-closed-by-user' ||
+        err.code === 'auth/cancelled-popup-request' ||
+        err.code === 'auth/operation-not-supported-in-this-environment') {
+      signInWithRedirect(AUTH, provider);
+    } else {
+      console.error('Login error:', err.code, err.message);
+      document.getElementById('stxt').textContent = '登入失敗';
+    }
+  }
+};
+
+window.doLogout = function() {
+  signOut(AUTH);
+};
 </script>
 
 <script>
-var nodes=[], pending=[], curId=null, detUrl=null, actFlt=null, actQt={};
-var custTags=JSON.parse(localStorage.getItem('ins-ct')||'[]');
-var db=null;
+// ── STATE ──
+window.nodes = window.nodes || [];
+var pending = [], curId = null, detUrl = null, actFlt = null, actQt = {};
+var custTags = JSON.parse(localStorage.getItem('ins-ct') || '[]');
+var rvText = '', rvRange = '';
 
-// Sync nodes from module
-window.addEventListener('fb-module-ready', function(){
-  db = window._db;
-  renderAll();
-});
-
-// Called by module when Firebase data updates
-window._onNodesUpdate = function(newNodes){
-  nodes = newNodes;
-  if(typeof renderAll === 'function') renderAll();
-};
-
-function connectFirebase(){ toast('設定已內建，自動連線中'); }
-function loadCfg(){ return {}; }
-
-function handleLogin(){
-  if(!window._auth || !window._fbFns){
-    toast('Firebase 載入中，請稍後再試');
-    return;
-  }
-  const provider = new window._fbFns.GoogleAuthProvider();
-  window._fbFns.signInWithRedirect(window._auth, provider);
-}
-function handleLogout(){
-  if(!window._auth || !window._fbFns) return;
-  window._fbFns.signOut(window._auth).then(()=>toast('已登出'));
-}
-async function fbSave(node){
-  var d=window._db||db;var f=window._fbFns;
-  if(!d||!f)return false;
-  try{await f.push(f.ref(d,'cmc_nodes'),node);return true;}catch(e){return false;}
-}
-async function fbUpdate(fid,data){
-  var d=window._db||db;var f=window._fbFns;
-  if(!d||!f||!fid)return;
-  try{await f.update(f.ref(d,'cmc_nodes/'+fid),data);}catch(e){}
-}
-async function fbDelete(fid){
-  var d=window._db||db;var f=window._fbFns;
-  if(!d||!f||!fid)return;
-  try{await f.remove(f.ref(d,'cmc_nodes/'+fid));}catch(e){}
+// ── LABEL MAP ──
+function tl(t) {
+  return {tool:'工具',concept:'概念',apply:'可應用',insight:'洞察',question:'問題',reference:'參考',dialogue:'對話',review:'回顧',work:'Work',build:'Build',life:'Life'}[t] || t;
 }
 
-// ── URL ──
-function onInp(el){
-  el.style.height='auto';el.style.height=Math.min(el.scrollHeight,110)+'px';
-  var m=el.value.match(/(https?:\/\/[^\s]+)/);
-  var bar=document.getElementById('ubar');
-  if(m){detUrl=m[0];document.getElementById('utx').textContent=detUrl;bar.classList.add('on');}
-  else{detUrl=null;bar.classList.remove('on');}
+// ── URL DETECTION ──
+function onInp(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 110) + 'px';
+  var m = el.value.match(/(https?:\/\/[^\s]+)/);
+  var bar = document.getElementById('ubar');
+  if (m) { detUrl = m[0]; document.getElementById('utx').textContent = detUrl; bar.classList.add('on'); }
+  else { detUrl = null; bar.classList.remove('on'); }
 }
-function onKD(e){if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault();doExtract();}}
-function clearUrl(){detUrl=null;document.getElementById('ubar').classList.remove('on');var i=document.getElementById('inp');i.value=i.value.replace(/(https?:\/\/[^\s]+)/g,'').trim();}
+function onKD(e) { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); doExtract(); } }
+function clearUrl() {
+  detUrl = null;
+  document.getElementById('ubar').classList.remove('on');
+  var i = document.getElementById('inp');
+  i.value = i.value.replace(/(https?:\/\/[^\s]+)/g, '').trim();
+}
 
 // ── QUICK TAGS ──
-var qtC={tool:'#4a7fc1',concept:'#6a7fc1',apply:'#b84a6a',insight:'#6a7fc1',question:'#c17a4a',reference:'#96a0b8',dialogue:'#4a7fc1',review:'#4caf7d',work:'#4a7fc1',build:'#c17a4a',life:'#6a7fc1'};
-function togQt(btn,tag){
-  if(actQt[tag]){delete actQt[tag];btn.style.background='none';btn.style.color='#5a6480';btn.style.border='1px solid rgba(90,110,150,0.22)';}
-  else{actQt[tag]=true;var c=qtC[tag]||'#6a7fc1';btn.style.background=c;btn.style.color='#fff';btn.style.border='1px solid '+c;}
+var qtC = {tool:'#4a7fc1',concept:'#6a7fc1',apply:'#b84a6a',insight:'#6a7fc1',question:'#c17a4a',reference:'#96a0b8',dialogue:'#4a7fc1',work:'#4a7fc1',build:'#c17a4a',life:'#6a7fc1'};
+function togQt(btn, tag) {
+  if (actQt[tag]) { delete actQt[tag]; btn.style.background='none'; btn.style.color='#5a6480'; btn.style.border='1px solid rgba(90,110,150,.22)'; }
+  else { actQt[tag] = true; var c = qtC[tag]||'#6a7fc1'; btn.style.background=c; btn.style.color='#fff'; btn.style.border='1px solid '+c; }
 }
-function saveCust(){localStorage.setItem('ins-ct',JSON.stringify(custTags));}
-function renderCust(){
-  var el=document.getElementById('custEl');el.innerHTML='';
-  custTags.forEach(function(t){
-    var btn=document.createElement('button');btn.className='qt';btn.textContent=t;
-    if(actQt[t]){btn.style.background='#6a7fc1';btn.style.color='#fff';btn.style.border='1px solid #6a7fc1';}
-    btn.addEventListener('click',function(){
-      if(actQt[t]){delete actQt[t];btn.style.background='none';btn.style.color='#5a6480';btn.style.border='1px solid rgba(90,110,150,0.22)';}
-      else{actQt[t]=true;btn.style.background='#6a7fc1';btn.style.color='#fff';btn.style.border='1px solid #6a7fc1';}
+function saveCust() { localStorage.setItem('ins-ct', JSON.stringify(custTags)); }
+function renderCust() {
+  var el = document.getElementById('custEl'); el.innerHTML = '';
+  custTags.forEach(function(t) {
+    var btn = document.createElement('button'); btn.className = 'qt'; btn.textContent = t;
+    if (actQt[t]) { btn.style.background='#6a7fc1'; btn.style.color='#fff'; btn.style.border='1px solid #6a7fc1'; }
+    btn.addEventListener('click', function() {
+      if (actQt[t]) { delete actQt[t]; btn.style.background='none'; btn.style.color='#5a6480'; btn.style.border='1px solid rgba(90,110,150,.22)'; }
+      else { actQt[t]=true; btn.style.background='#6a7fc1'; btn.style.color='#fff'; btn.style.border='1px solid #6a7fc1'; }
     });
     el.appendChild(btn);
   });
 }
-function showAddInp(){document.getElementById('qaddBtn').style.display='none';document.getElementById('qaddInp').classList.add('on');document.getElementById('qaddOk').classList.add('on');document.getElementById('qaddInp').focus();}
-function qaddKD(e){if(e.key==='Enter'){e.preventDefault();confirmAddTag();}if(e.key==='Escape')hideAddInp();}
-function hideAddInp(){document.getElementById('qaddBtn').style.display='';document.getElementById('qaddInp').classList.remove('on');document.getElementById('qaddOk').classList.remove('on');document.getElementById('qaddInp').value='';}
-function confirmAddTag(){
-  var val=document.getElementById('qaddInp').value.trim();
-  if(!val){hideAddInp();return;}
-  if(custTags.indexOf(val)>-1){toast('標記已存在');hideAddInp();return;}
-  custTags.push(val);saveCust();renderCust();hideAddInp();toast('已新增：'+val);
+function showAdd() { document.getElementById('qaddBtn').style.display='none'; document.getElementById('qaddInp').classList.add('on'); document.getElementById('qaddOk').classList.add('on'); document.getElementById('qaddInp').focus(); }
+function addKD(e) { if (e.key==='Enter'){e.preventDefault();confirmAdd();}if(e.key==='Escape')hideAdd(); }
+function hideAdd() { document.getElementById('qaddBtn').style.display=''; document.getElementById('qaddInp').classList.remove('on'); document.getElementById('qaddOk').classList.remove('on'); document.getElementById('qaddInp').value=''; }
+function confirmAdd() {
+  var v = document.getElementById('qaddInp').value.trim();
+  if (!v) { hideAdd(); return; }
+  if (custTags.indexOf(v) > -1) { toast('標記已存在'); hideAdd(); return; }
+  custTags.push(v); saveCust(); renderCust(); hideAdd(); toast('已新增：' + v);
 }
 
 // ── EXTRACT ──
-function tl(t){return{tool:'工具',concept:'概念',apply:'可應用',insight:'洞察',question:'問題',reference:'參考',dialogue:'對話',review:'回顧',work:'Work',build:'Build',life:'Life'}[t]||t;}
-function doExtract(){
-  var raw=document.getElementById('inp').value.trim();if(!raw)return;
-  var ep=document.getElementById('ep'),eh=document.getElementById('eh'),ec=document.getElementById('echips'),es=document.getElementById('esave');
-  ep.classList.add('on');eh.innerHTML='<div class="dot"></div><span class="loading-dots">萃取中<span>.</span><span>.</span><span>.</span></span>';ec.innerHTML='';es.style.display='none';pending=[];
-  var text=raw.replace(/(https?:\/\/[^\s]+)/g,'').trim();
-  var hint=Object.keys(actQt).length?'預設標籤：'+Object.keys(actQt).join(',')+'。':'';
-  fetch('https://api.anthropic.com/v1/messages',{
-    method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
-      system:'你是 Vivian 的個人 AI 洞察節點萃取器。Vivian 是 HanchorBio CMC Executive Director，同時在建立 Fire by Design 個人品牌，並有豐富的生活感悟和個人成長記錄。從輸入中萃取 2-4 個關鍵節點。每個節點：title（繁中20字內，精準描述核心概念）、excerpt（40字內，具體可操作）、tags（可選："tool"/"concept"/"apply"/"insight"/"question"/"reference"/"dialogue"）、track（"work"=CMC/工作相關，"build"=內容創作/品牌/副業，"life"=生活/感悟/身體/家庭，"both"=跨領域）。'+hint+'優先萃取行動導向洞察。只回傳 JSON 陣列，不含其他文字。格式：[{"title":"...","excerpt":"...","tags":["insight"],"track":"life"}]',
-      messages:[{role:'user',content:text||raw}]})
-  }).then(function(r){return r.json();}).then(function(d){
-    var t2=d.content&&d.content.find(function(c){return c.type==='text';});
-    var raw2=t2?t2.text:'[]';var ex;
-    try{ex=JSON.parse(raw2.replace(/```json?|```/g,'').trim());}catch{ex=fallback(raw);}
-    eh.innerHTML='<span style="color:#4a7fc1;font-size:9px;letter-spacing:.12em;text-transform:uppercase">萃取完成 — '+ex.length+' 個節點</span>';
-    var now=new Date().toISOString();
-    pending=ex.map(function(n,i){return Object.assign({},n,{id:Date.now()+i,sourceLabel:detUrl?new URL(detUrl).hostname:'手動輸入',sourceUrl:detUrl||'',createdAt:now,rawInput:raw,imageUrl:'',connections:0});});
-    pending.forEach(function(n){var c=document.createElement('div');c.className='chip';c.innerHTML=(n.tags||[]).map(function(t){return '<span class="ct">'+tl(t)+'</span>';}).join('')+'<span>'+n.title+'</span>';ec.appendChild(c);});
-    es.style.display='inline-block';
-  }).catch(function(){
-    pending=fallback(raw).map(function(n,i){return Object.assign({},n,{id:Date.now()+i,sourceLabel:detUrl?new URL(detUrl).hostname:'手動輸入',sourceUrl:detUrl||'',createdAt:new Date().toISOString(),rawInput:raw,imageUrl:'',connections:0});});
-    eh.innerHTML='<span style="font-size:9px;color:#b84a6a">離線模式</span>';
-    pending.forEach(function(n){var c=document.createElement('div');c.className='chip';c.innerHTML='<span class="ct">概念</span><span>'+n.title+'</span>';ec.appendChild(c);});
-    es.style.display='inline-block';
+function doExtract() {
+  var raw = document.getElementById('inp').value.trim(); if (!raw) return;
+  var ep=document.getElementById('ep'), eh=document.getElementById('eh'), ec=document.getElementById('echips'), es=document.getElementById('esave');
+  ep.classList.add('on'); eh.innerHTML='<div class="dot"></div><span>萃取中...</span>'; ec.innerHTML=''; es.style.display='none'; pending=[];
+  var text = raw.replace(/(https?:\/\/[^\s]+)/g,'').trim();
+  var hint = Object.keys(actQt).length ? '預設標籤：'+Object.keys(actQt).join(',')+'。' : '';
+  fetch('https://api.anthropic.com/v1/messages', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      model:'claude-sonnet-4-20250514', max_tokens:1000,
+      system: '你是 Vivian 的 AI 洞察節點萃取器。Vivian 是 HanchorBio CMC Executive Director，同時建立 Fire by Design 個人品牌，有豐富的生活感悟記錄。從輸入中萃取 2-4 個關鍵節點。每個節點：title（繁中20字內）、excerpt（40字內）、tags（可選："tool"/"concept"/"apply"/"insight"/"question"/"reference"/"dialogue"）、track（"work"=CMC/工作，"build"=內容/品牌，"life"=生活/感悟，"both"=跨領域）。' + hint + '只回傳 JSON 陣列，不含其他文字。格式：[{"title":"...","excerpt":"...","tags":["insight"],"track":"life"}]',
+      messages: [{role:'user', content: text || raw}]
+    })
+  }).then(r => r.json()).then(d => {
+    var t = d.content && d.content.find(c => c.type==='text');
+    var raw2 = t ? t.text : '[]'; var ex;
+    try { ex = JSON.parse(raw2.replace(/```json?|```/g,'').trim()); } catch(e) { ex = fallback(raw); }
+    eh.innerHTML = '<span style="color:var(--a);font-size:9px;letter-spacing:.12em;text-transform:uppercase">萃取完成 — '+ex.length+' 個節點</span>';
+    var now = new Date().toISOString();
+    pending = ex.map((n, i) => ({...n, id:Date.now()+i, sourceLabel:detUrl?new URL(detUrl).hostname:'手動輸入', sourceUrl:detUrl||'', createdAt:now, rawInput:raw, imageUrl:'', connections:0}));
+    pending.forEach(n => { var c=document.createElement('div'); c.className='chip'; c.innerHTML=(n.tags||[]).map(t=>'<span class="ct">'+tl(t)+'</span>').join('')+'<span>'+n.title+'</span>'; ec.appendChild(c); });
+    es.style.display = 'inline-block';
+  }).catch(() => {
+    pending = fallback(raw).map((n,i) => ({...n, id:Date.now()+i, sourceLabel:detUrl?new URL(detUrl).hostname:'手動輸入', sourceUrl:detUrl||'', createdAt:new Date().toISOString(), rawInput:raw, imageUrl:'', connections:0}));
+    eh.innerHTML = '<span style="font-size:9px;color:var(--d)">離線模式</span>';
+    pending.forEach(n => { var c=document.createElement('div'); c.className='chip'; c.innerHTML='<span class="ct">概念</span><span>'+n.title+'</span>'; ec.appendChild(c); });
+    es.style.display = 'inline-block';
   });
 }
-function fallback(input){
-  var t=input.replace(/(https?:\/\/[^\s]+)/g,'').trim().slice(0,55).replace(/\n/g,' ');
-  var ks=Object.keys(actQt);
-  return [{title:t.length>50?t.slice(0,50)+'…':t,excerpt:'手動輸入節點。',tags:ks.length?ks:['concept'],track:actQt['cmc']?'cmc':actQt['fire']?'fire':'both'}];
+function fallback(input) {
+  var t = input.replace(/(https?:\/\/[^\s]+)/g,'').trim().slice(0,55).replace(/\n/g,' ');
+  var ks = Object.keys(actQt);
+  return [{title:t.length>50?t.slice(0,50)+'…':t, excerpt:'手動輸入節點。', tags:ks.length?ks:['concept'], track:actQt['work']?'work':actQt['build']?'build':actQt['life']?'life':'both'}];
 }
-async function saveAll(){
-  for(var i=0;i<pending.length;i++){
-    if(db){var ok=await fbSave(pending[i]);if(!ok)nodes.unshift(pending[i]);}
-    else nodes.unshift(pending[i]);
+
+// ── FIREBASE SAVE/UPDATE/DELETE ──
+async function fbSave(node) {
+  if (!window.DB) return false;
+  try { await window.fbPush(window.fbRef(window.DB,'cmc_nodes'), node); return true; } catch(e) { return false; }
+}
+async function fbUpdate(fid, upd) {
+  if (!window.DB || !fid) return;
+  try { await window.fbUpdate(window.fbRef(window.DB,'cmc_nodes/'+fid), upd); } catch(e) {}
+}
+async function fbDelete(fid) {
+  if (!window.DB || !fid) return;
+  try { await window.fbRemove(window.fbRef(window.DB,'cmc_nodes/'+fid)); } catch(e) {}
+}
+
+async function saveAll() {
+  for (var i = 0; i < pending.length; i++) {
+    if (window.DB) { await fbSave(pending[i]); }
+    else { window.nodes.unshift(pending[i]); }
   }
-  document.getElementById('inp').value='';document.getElementById('inp').style.height='auto';
-  document.getElementById('ep').classList.remove('on');document.getElementById('ubar').classList.remove('on');
-  detUrl=null;actQt={};
-  ['tool','concept','apply','cmc','fire'].forEach(function(t){
-    var e=document.getElementById('qt-'+t);
-    if(e){e.style.background='none';e.style.color='#5a6480';e.style.border='1px solid rgba(90,110,150,0.22)';}
+  document.getElementById('inp').value = ''; document.getElementById('inp').style.height='auto';
+  document.getElementById('ep').classList.remove('on'); document.getElementById('ubar').classList.remove('on');
+  detUrl=null; actQt={};
+  ['tool','concept','apply','insight','question','reference','dialogue','work','build','life'].forEach(t => {
+    var e=document.getElementById('qt-'+t); if(e){e.style.background='none';e.style.color='#5a6480';e.style.border='1px solid rgba(90,110,150,.22)';}
   });
-  renderCust();pending=[];
-  if(!db)renderAll();
+  renderCust(); pending=[];
+  if (!window.DB) renderAll();
   toast('節點已儲存 ✓');
 }
 
-// ── WEEKLY SUMMARY ──
-async function runWeeklySummary(){
-  if(!nodes.length){toast('節點庫是空的');return;}
-  toast('產生週摘要中…');
-  try{
-    var summaryText=nodes.slice(0,20).map(function(n){return '・'+n.title+'：'+n.excerpt;}).join('\n');
-    var res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,
-        system:'你是 Vivian 的個人知識助理。Vivian 是 HanchorBio CMC Executive Director，同時建立 Fire by Design 個人品牌。根據她最近的洞察節點，產出週摘要：1. 最值得深化的 2-3 個方向 2. 可應用在 CMC 的洞察（1-2條）3. 可用在 Fire by Design 的素材（1-2條）。繁體中文，條列式，簡潔有力。',
-        messages:[{role:'user',content:summaryText}]})
-    });
-    var data=await res.json();
-    var summary=data.content&&data.content.find(function(c){return c.type==='text';});
-    var txt=summary?summary.text:'無法產生摘要';
-    var sn={title:'週摘要 '+new Date().toLocaleDateString('zh-TW'),excerpt:txt.slice(0,80)+'…',tags:['concept'],track:'both',sourceLabel:'Insight OS 週摘要',sourceUrl:'',createdAt:new Date().toISOString(),rawInput:txt,imageUrl:'',connections:0,isSummary:true};
-    if(db)await fbSave(sn);else{nodes.unshift(sn);renderAll();}
-    toast('週摘要已產生 ✓');
-  }catch{toast('週摘要產生失敗');}
-}
-
 // ── REVIEW ──
-var _reviewText = '';
-var _reviewRange = '';
-
-function showReviewPanel(){
-  var p=document.getElementById('reviewPanel');
-  if(!p)return;
-  p.style.display=p.style.display==='none'||p.style.display===''?'block':'none';
+function toggleReview() {
+  var p = document.getElementById('rvPanel');
+  p.classList.toggle('on');
 }
-function hideReviewPanel(){
-  var p=document.getElementById('reviewPanel');
-  if(p)p.style.display='none';
+function onRvPreset() {
+  var v = document.getElementById('rvPreset').value;
+  var c = document.getElementById('rvCustom');
+  c.style.display = v==='custom' ? 'flex' : 'none';
 }
-function onReviewPreset(){
-  var v=document.getElementById('reviewPreset').value;
-  var row=document.getElementById('customDateRow');
-  if(row)row.style.display=v==='custom'?'flex':'none';
-}
-function getReviewNodes(){
-  var preset=document.getElementById('reviewPreset').value;
-  var now=new Date();
-  var from, to=new Date();
-  if(preset==='custom'){
-    var f=document.getElementById('reviewFrom').value;
-    var t=document.getElementById('reviewTo').value;
-    if(!f||!t){toast('請選擇日期區間');return null;}
-    from=new Date(f);to=new Date(t);to.setHours(23,59,59);
+async function runReview() {
+  var nodes = window.nodes || [];
+  if (!nodes.length) { toast('節點庫是空的'); return; }
+  var preset = document.getElementById('rvPreset').value;
+  var now = new Date(), from, to = new Date();
+  if (preset === 'custom') {
+    var f=document.getElementById('rvFrom').value, t=document.getElementById('rvTo').value;
+    if (!f||!t) { toast('請選擇日期區間'); return; }
+    from=new Date(f); to=new Date(t); to.setHours(23,59,59);
   } else {
-    var days=parseInt(preset);
-    from=new Date(now.getTime()-days*24*60*60*1000);
+    from = new Date(now.getTime() - parseInt(preset)*24*60*60*1000);
   }
-  var filtered=nodes.filter(function(n){
-    if(!n.createdAt)return false;
-    var d=new Date(n.createdAt);
-    return d>=from&&d<=to;
-  });
-  var fromStr=from.toLocaleDateString('zh-TW');
-  var toStr=to.toLocaleDateString('zh-TW');
-  var label=preset==='custom'
-    ?document.getElementById('reviewFrom').value+' → '+document.getElementById('reviewTo').value
-    :'過去 '+preset+' 天（'+fromStr+' → '+toStr+'）';
-  return {nodes:filtered,label:label,isQuarter:preset==='90'};
-}
-async function runReview(){
-  if(!nodes.length){toast('節點庫是空的');return;}
-  var result=getReviewNodes();
-  if(!result)return;
-  if(!result.nodes.length){toast('這段區間內沒有節點');return;}
-  var hdr=document.getElementById('reviewHdr');
-  var rc=document.getElementById('reviewContent');
-  var rd=document.getElementById('reviewResult');
-  hdr.textContent='回顧生成中…';
-  rd.style.display='block';
-  rc.textContent='';
-  _reviewRange=result.label;
-  var summaryText=result.nodes.map(function(n){
-    return '['+( n.track||'both')+']['+((n.tags||[]).join(','))+'] '+n.title+'：'+n.excerpt;
-  }).join('\n');
-  var isQuarter=result.isQuarter;
-  var quarterSection=isQuarter?'\n\n【季度 Odyssey 對照】\n這段時間的行動，是否靠近長期目標方向':'';
-  try{
-    var res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,system:'你是 Vivian 的個人知識助理。根據她這段時間的節點，用固定格式產出回顧（繁體中文）：\n\n【這段時間的主軸】\n2-3個核心主題\n\n【浮現的模式】\n跨節點重複的想法或感受\n\n【未解的問題】\nquestion標籤的節點\n\n【可行動項目】\n具體可做的事不超過3條\n\n【值得深化的洞察】\n最有潛力的1-2個想法'+quarterSection,messages:[{role:'user',content:'回顧區間：'+result.label+'\n\n節點清單：\n'+summaryText}]})
+  var filtered = nodes.filter(n => n.createdAt && new Date(n.createdAt)>=from && new Date(n.createdAt)<=to);
+  if (!filtered.length) { toast('這段區間內沒有節點'); return; }
+  var label = preset==='custom' ? document.getElementById('rvFrom').value+' → '+document.getElementById('rvTo').value : '過去'+preset+'天（'+from.toLocaleDateString('zh-TW')+' → '+to.toLocaleDateString('zh-TW')+'）';
+  rvRange = label;
+  var hdr=document.getElementById('rvHdr'), rc=document.getElementById('rvContent'), rw=document.getElementById('rvResultWrap');
+  hdr.textContent='回顧生成中…'; rc.textContent=''; rw.style.display='block';
+  var summary = filtered.map(n => '['+( n.track||'both')+']['+((n.tags||[]).join(','))+'] '+n.title+'：'+n.excerpt).join('\n');
+  var isQ = preset==='90';
+  var sys = '你是 Vivian 的個人知識助理。根據這段時間的節點，用以下格式產出回顧（繁體中文）：\n\n【這段時間的主軸】\n2-3個核心主題\n\n【浮現的模式】\n跨節點重複的想法或感受\n\n【未解的問題】\nquestion標籤的節點或懸念\n\n【可行動項目】\n具體可做的事不超過3條\n\n【值得深化的洞察】\n最有潛力的1-2個想法' + (isQ ? '\n\n【季度 Odyssey 對照】\n這段時間是否靠近長期目標方向' : '');
+  try {
+    var res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({model:'claude-sonnet-4-20250514', max_tokens:1200, system:sys, messages:[{role:'user', content:'回顧區間：'+label+'\n\n節點清單：\n'+summary}]})
     });
-    var data=await res.json();
-    var t2=data.content&&data.content.find(function(c){return c.type==='text';});
-    _reviewText=t2?t2.text:'無法產生回顧';
-    hdr.textContent='回顧完成 — '+result.label;
-    rc.textContent=_reviewText;
-  }catch(e){
-    _reviewText='回顧產生失敗，請稍後再試。';
-    hdr.textContent='發生錯誤';
-    rc.textContent=_reviewText;
-    toast('回顧產生失敗');
-  }
+    var data = await res.json();
+    var txt = data.content && data.content.find(c=>c.type==='text');
+    rvText = txt ? txt.text : '無法產生回顧';
+    hdr.textContent = '回顧完成 — '+label;
+    rc.textContent = rvText;
+  } catch(e) { rvText='回顧產生失敗'; hdr.textContent='發生錯誤'; rc.textContent=rvText; toast('回顧產生失敗'); }
 }
-async function saveReviewAsCard(){
-  if(!_reviewText)return;
-  var preset=document.getElementById('reviewPreset').value;
-  var title=(preset==='90'?'季度回顧 ':'回顧 ')+new Date().toLocaleDateString('zh-TW');
-  var sn={
-    title:title,
-    excerpt:_reviewText.slice(0,80)+'…',
-    tags:['review'],
-    track:'both',
-    sourceLabel:'Insight OS 回顧',
-    sourceUrl:'',
-    createdAt:new Date().toISOString(),
-    rawInput:_reviewText,
-    imageUrl:'',
-    connections:0
-  };
-  if(db)await fbSave(sn);
-  else{nodes.unshift(sn);renderAll();}
-  toast('回顧已存成卡片 ✓');
-  hideReviewPanel();
+async function saveReview() {
+  if (!rvText) return;
+  var preset = document.getElementById('rvPreset').value;
+  var sn = {title:(preset==='90'?'季度回顧 ':'回顧 ')+new Date().toLocaleDateString('zh-TW'), excerpt:rvText.slice(0,80)+'…', tags:['review'], track:'both', sourceLabel:'Insight OS 回顧', sourceUrl:'', createdAt:new Date().toISOString(), rawInput:rvText, imageUrl:'', connections:0};
+  if (window.DB) await fbSave(sn); else { window.nodes.unshift(sn); renderAll(); }
+  toast('回顧已存成卡片 ✓'); toggleReview();
 }
 
 // ── RENDER ──
-function renderAll(){renderStats();renderGrid();}window._renderAll=renderAll;
-function renderStats(){
-  document.getElementById('sT').textContent=nodes.length;
-  document.getElementById('sC').textContent=nodes.filter(function(n){return n.track==='work'||n.track==='both';}).length;
-  document.getElementById('sF').textContent=nodes.filter(function(n){return n.track==='build'||n.track==='both';}).length;
-  var sL=document.getElementById('sL');if(sL)sL.textContent=nodes.filter(function(n){return n.track==='life'||n.track==='both';}).length;
-  var sA=document.getElementById('sA');if(sA)sA.textContent=nodes.filter(function(n){return n.tags&&n.tags.indexOf('apply')>-1;}).length;
-  var cntWork=document.getElementById('cnt-work');
-  var cntBuild=document.getElementById('cnt-build');
-  var cntLife=document.getElementById('cnt-life');
-  if(cntWork)cntWork.textContent=nodes.filter(function(n){return n.track==='work'||n.track==='both';}).length;
-  if(cntBuild)cntBuild.textContent=nodes.filter(function(n){return n.track==='build'||n.track==='both';}).length;
-  if(cntLife)cntLife.textContent=nodes.filter(function(n){return n.track==='life'||n.track==='both';}).length;
-}
-function renderGrid(list){
-  var grid=document.getElementById('grid');
-  var fl=list!==undefined?list:nodes;
-  if(actFlt)fl=fl.filter(function(n){return n.tags&&n.tags.indexOf(actFlt)>-1;});
-  if(!fl.length){grid.innerHTML='<div class="empty"><div style="font-size:22px;opacity:.18;margin-bottom:8px">◎</div><div style="font-size:11px;line-height:1.7;color:var(--txd)">尚無節點<br>貼入內容，按「萃取」開始</div></div>';return;}
-  grid.innerHTML=fl.map(function(n,i){
-    var src=n.sourceUrl?'<a class="csrc" href="'+n.sourceUrl+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+n.sourceLabel+'</a>':'<span class="csrct">'+(n.sourceLabel||'手動')+'</span>';
-    var dt=n.createdAt?n.createdAt.slice(0,10):'';
-    var trkMap={work:'Work',build:'Build',life:'Life',both:'',cmc:'CMC',fire:'Fire'};
-    var trk=n.track==='both'?'<span class="ctag t-work">Work</span><span class="ctag t-build">Build</span><span class="ctag t-life">Life</span>':'<span class="ctag t-'+(n.track||'both')+'">'+(trkMap[n.track]||n.track)+'</span>';
-    var knownTags=['tool','concept','apply','insight','question','reference','dialogue','review'];
-    var tgs=(n.tags||[]).map(function(t){return '<span class="ctag '+(knownTags.indexOf(t)>-1?t:'custom')+'">'+tl(t)+'</span>';}).join('');
-    var cardTrack=n.track||'both';
-    return '<div class="card '+cardTrack+'" style="animation-delay:'+i*.04+'s" onclick="openModal('+n.id+')"><div class="ctags">'+tgs+trk+'</div><div class="ctit">'+n.title+'</div><div class="cex">'+n.excerpt+'</div><div class="cft">'+src+'<span class="cdt">'+dt+'</span></div></div>';
+window.renderAll = function() {
+  var nodes = window.nodes || [];
+  document.getElementById('sT').textContent = nodes.length;
+  document.getElementById('sW').textContent = nodes.filter(n=>n.track==='work'||n.track==='both').length;
+  document.getElementById('sB').textContent = nodes.filter(n=>n.track==='build'||n.track==='both').length;
+  document.getElementById('sL').textContent = nodes.filter(n=>n.track==='life'||n.track==='both').length;
+  document.getElementById('cnt-w').textContent = nodes.filter(n=>n.track==='work'||n.track==='both').length;
+  document.getElementById('cnt-b').textContent = nodes.filter(n=>n.track==='build'||n.track==='both').length;
+  document.getElementById('cnt-l').textContent = nodes.filter(n=>n.track==='life'||n.track==='both').length;
+  renderGrid();
+};
+function renderGrid(list) {
+  var nodes = window.nodes || [];
+  var grid = document.getElementById('grid');
+  var fl = list !== undefined ? list : nodes;
+  if (actFlt) fl = fl.filter(n => n.tags && n.tags.indexOf(actFlt) > -1);
+  if (!fl.length) { grid.innerHTML='<div class="empty"><div style="font-size:22px;opacity:.18;margin-bottom:8px">◎</div><div style="font-size:11px;line-height:1.7;color:var(--txd)">尚無節點<br>貼入內容，按「萃取」開始</div></div>'; return; }
+  var known = ['tool','concept','apply','insight','question','reference','dialogue','review'];
+  var trkMap = {work:'Work',build:'Build',life:'Life',both:'',cmc:'CMC',fire:'Fire'};
+  grid.innerHTML = fl.map((n,i) => {
+    var src = n.sourceUrl ? '<a class="csrc" href="'+n.sourceUrl+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+n.sourceLabel+'</a>' : '<span class="csrct">'+(n.sourceLabel||'手動')+'</span>';
+    var dt = n.createdAt ? n.createdAt.slice(0,10) : '';
+    var trk = n.track==='both' ? '<span class="ctag t-work">Work</span><span class="ctag t-build">Build</span><span class="ctag t-life">Life</span>' : '<span class="ctag t-'+(n.track||'both')+'">'+(trkMap[n.track]||n.track)+'</span>';
+    var tgs = (n.tags||[]).map(t=>'<span class="ctag '+(known.indexOf(t)>-1?t:'custom')+'">'+tl(t)+'</span>').join('');
+    return '<div class="card '+(n.track||'both')+'" style="animation-delay:'+i*.04+'s" onclick="openModal('+n.id+')"><div class="ctags">'+tgs+trk+'</div><div class="ctit">'+n.title+'</div><div class="cex">'+n.excerpt+'</div><div class="cft">'+src+'<span class="cdt">'+dt+'</span></div></div>';
   }).join('');
 }
 
 // ── FILTERS ──
-function filterByType(type){
-  actFlt=type;
-  document.querySelectorAll('.fb').forEach(function(b){b.classList.remove('on');});
+function filterType(type) {
+  actFlt = type;
+  document.querySelectorAll('.fb').forEach(b=>b.classList.remove('on'));
   document.getElementById(type?'fb-'+type:'fb-all').classList.add('on');
   renderGrid(undefined);
 }
-function filterByTrack(track){
-  actFlt=null;
-  document.querySelectorAll('.fb').forEach(function(b){b.classList.remove('on');});
+function filterTrack(track) {
+  actFlt = null;
+  document.querySelectorAll('.fb').forEach(b=>b.classList.remove('on'));
   document.getElementById('fb-all').classList.add('on');
-  renderGrid(nodes.filter(function(n){return n.track===track||n.track==='both'||n.track===track;}));
+  renderGrid((window.nodes||[]).filter(n=>n.track===track||n.track==='both'));
 }
 
 // ── VIEW SWITCH ──
-function switchView(view,el){
-  document.querySelectorAll('.nav-item').forEach(function(i){i.classList.remove('active');});
+function switchView(view, el) {
+  document.querySelectorAll('.ni').forEach(i=>i.classList.remove('active'));
   el.classList.add('active');
-  document.getElementById('libraryView').style.display=view==='library'?'block':'none';
-  document.getElementById('flowView').style.display=view==='flow'?'block':'none';
-  document.getElementById('settingsView').style.display=view==='settings'?'block':'none';
-  if(view==='settings'){
-    var cfg=loadCfg();
-    if(cfg)['apiKey','authDomain','databaseURL','projectId','storageBucket','appId'].forEach(function(k){
-      var e=document.getElementById('cfg-'+k);if(e&&cfg[k])e.value=cfg[k];
-    });
-  }
+  document.getElementById('libraryView').style.display = view==='library'?'block':'none';
+  document.getElementById('flowView').style.display = view==='flow'?'block':'none';
+  document.getElementById('settingsView').style.display = view==='settings'?'block':'none';
 }
 
 // ── MODAL ──
-function openModal(id){
-  var n=null;for(var i=0;i<nodes.length;i++){if(nodes[i].id===id){n=nodes[i];break;}}
-  if(!n)return;curId=id;
-  document.getElementById('mT').value=n.title||'';
-  document.getElementById('mE').value=n.excerpt||'';
-  // Tag toggles
-  var allTags=['tool','concept','apply','insight','question','reference','dialogue'].concat(custTags);
-  var tc=document.getElementById('mTags');tc.innerHTML='';
-  allTags.forEach(function(t){
-    var btn=document.createElement('button');
-    btn.textContent=tl(t);btn.setAttribute('data-tag',t);
+function openModal(id) {
+  var nodes = window.nodes || [];
+  var n = nodes.find(x=>x.id===id); if (!n) return; curId=id;
+  document.getElementById('mT').value = n.title||'';
+  document.getElementById('mE').value = n.excerpt||'';
+  var allTags = ['tool','concept','apply','insight','question','reference','dialogue'].concat(custTags);
+  var tc = document.getElementById('mTags'); tc.innerHTML='';
+  allTags.forEach(t => {
+    var btn=document.createElement('button'); btn.textContent=tl(t); btn.setAttribute('data-tag',t);
     btn.style.cssText='font-size:11px;padding:5px 14px;border-radius:6px;cursor:pointer;font-family:inherit;transition:all .12s;';
     var on=(n.tags||[]).indexOf(t)>-1;
-    var tagColorMap={apply:{bg:'#b84a6a',c:'#fff',b:'#b84a6a'},question:{bg:'#c17a4a',c:'#fff',b:'#c17a4a'},reference:{bg:'#96a0b8',c:'#fff',b:'#96a0b8'},review:{bg:'#4caf7d',c:'#fff',b:'#4caf7d'}};
-    var colors=tagColorMap[t]||{bg:'#6a7fc1',c:'#fff',b:'#6a7fc1'};
-    if(on){btn.style.background=colors.bg;btn.style.color=colors.c;btn.style.border='1px solid '+colors.b;}
-    else{btn.style.background='#edf0f5';btn.style.color='#5a6480';btn.style.border='1px solid rgba(90,110,150,0.22)';}
+    var colors=t==='apply'?{bg:'#b84a6a',c:'#fff'}:t==='question'?{bg:'#c17a4a',c:'#fff'}:{bg:'#6a7fc1',c:'#fff'};
+    if(on){btn.style.background=colors.bg;btn.style.color=colors.c;btn.style.border='1px solid '+colors.bg;}
+    else{btn.style.background='#edf0f5';btn.style.color='#5a6480';btn.style.border='1px solid rgba(90,110,150,.22)';}
     btn.setAttribute('data-on',on?'1':'0');
     btn.addEventListener('click',function(){
       var isOn=btn.getAttribute('data-on')==='1';
-      if(isOn){btn.style.background='#edf0f5';btn.style.color='#5a6480';btn.style.border='1px solid rgba(90,110,150,0.22)';btn.setAttribute('data-on','0');}
-      else{btn.style.background=colors.bg;btn.style.color=colors.c;btn.style.border='1px solid '+colors.b;btn.setAttribute('data-on','1');}
+      if(isOn){btn.style.background='#edf0f5';btn.style.color='#5a6480';btn.style.border='1px solid rgba(90,110,150,.22)';btn.setAttribute('data-on','0');}
+      else{btn.style.background=colors.bg;btn.style.color=colors.c;btn.style.border='1px solid '+colors.bg;btn.setAttribute('data-on','1');}
     });
     tc.appendChild(btn);
   });
-  // Track toggles
   var trDefs=[{v:'work',l:'Work',bg:'#4a7fc1'},{v:'build',l:'Build',bg:'#c17a4a'},{v:'life',l:'Life',bg:'#6a7fc1'},{v:'both',l:'全部',bg:'#4caf7d'}];
-  var trc=document.getElementById('mTr');trc.innerHTML='';
-  trDefs.forEach(function(tr){
-    var btn=document.createElement('button');
-    btn.textContent=tr.l;btn.setAttribute('data-tr',tr.v);
+  var trc=document.getElementById('mTr'); trc.innerHTML='';
+  trDefs.forEach(tr=>{
+    var btn=document.createElement('button'); btn.textContent=tr.l; btn.setAttribute('data-tr',tr.v);
     btn.style.cssText='font-size:11px;padding:5px 0;border-radius:6px;cursor:pointer;font-family:inherit;flex:1;text-align:center;transition:all .12s;';
     var on=n.track===tr.v;
     if(on){btn.style.background=tr.bg;btn.style.color='#fff';btn.style.border='1px solid '+tr.bg;}
-    else{btn.style.background='#edf0f5';btn.style.color='#5a6480';btn.style.border='1px solid rgba(90,110,150,0.22)';}
+    else{btn.style.background='#edf0f5';btn.style.color='#5a6480';btn.style.border='1px solid rgba(90,110,150,.22)';}
     btn.addEventListener('click',function(){
-      document.querySelectorAll('#mTr button').forEach(function(b){b.style.background='#edf0f5';b.style.color='#5a6480';b.style.border='1px solid rgba(90,110,150,0.22)';});
+      document.querySelectorAll('#mTr button').forEach(b=>{b.style.background='#edf0f5';b.style.color='#5a6480';b.style.border='1px solid rgba(90,110,150,.22)';});
       btn.style.background=tr.bg;btn.style.color='#fff';btn.style.border='1px solid '+tr.bg;
     });
     trc.appendChild(btn);
   });
-  // Raw
   var rs=document.getElementById('mRawSec');
-  if(n.rawInput&&n.rawInput!==n.excerpt){document.getElementById('mRaw').textContent=n.rawInput;rs.style.display='block';}
-  else rs.style.display='none';
-  // Source
+  if(n.rawInput&&n.rawInput!==n.excerpt){document.getElementById('mRaw').textContent=n.rawInput;rs.style.display='block';}else rs.style.display='none';
   var link=document.getElementById('mLink');
-  if(n.sourceUrl){link.href=n.sourceUrl;link.textContent=n.sourceLabel||n.sourceUrl;link.style.display='inline';}
-  else link.style.display='none';
+  if(n.sourceUrl){link.href=n.sourceUrl;link.textContent=n.sourceLabel||n.sourceUrl;link.style.display='inline';}else link.style.display='none';
   document.getElementById('delBtn').style.display='';
   document.getElementById('delConfirm').classList.remove('on');
   document.getElementById('modal').classList.add('on');
   document.body.style.overflow='hidden';
 }
-async function saveEdit(){
-  if(!curId)return;
+async function saveEdit() {
+  if (!curId) return;
+  var nodes = window.nodes || [];
   var title=document.getElementById('mT').value.trim();
   var excerpt=document.getElementById('mE').value.trim();
   var tags=[];
-  document.querySelectorAll('#mTags button').forEach(function(btn){if(btn.getAttribute('data-on')==='1')tags.push(btn.getAttribute('data-tag'));});
-  var trBtn=null;
-  document.querySelectorAll('#mTr button').forEach(function(b){if(b.style.color==='rgb(255, 255, 255)')trBtn=b;});
+  document.querySelectorAll('#mTags button').forEach(btn=>{if(btn.getAttribute('data-on')==='1')tags.push(btn.getAttribute('data-tag'));});
+  var trBtn=null; document.querySelectorAll('#mTr button').forEach(b=>{if(b.style.color==='rgb(255, 255, 255)')trBtn=b;});
   var track=trBtn?trBtn.getAttribute('data-tr'):'both';
-  var updated={title:title,excerpt:excerpt,tags:tags,track:track};
-  var n=null;for(var i=0;i<nodes.length;i++){if(nodes[i].id===curId){n=nodes[i];break;}}
-  if(db&&n&&n.firebaseId){await fbUpdate(n.firebaseId,updated);}
-  else{for(var j=0;j<nodes.length;j++){if(nodes[j].id===curId){nodes[j]=Object.assign({},nodes[j],updated);break;}}renderAll();}
-  closeModal();toast('已儲存修改 ✓');
+  var n=nodes.find(x=>x.id===curId);
+  if(window.DB&&n&&n.firebaseId){await fbUpdate(n.firebaseId,{title,excerpt,tags,track});}
+  else{var idx=nodes.findIndex(x=>x.id===curId);if(idx>-1){nodes[idx]={...nodes[idx],title,excerpt,tags,track};window.nodes=nodes;renderAll();}}
+  closeModal(); toast('已儲存修改 ✓');
 }
 function askDel(){document.getElementById('delBtn').style.display='none';document.getElementById('delConfirm').classList.add('on');}
 function cancelDel(){document.getElementById('delBtn').style.display='';document.getElementById('delConfirm').classList.remove('on');}
-async function doDelete(){
+async function doDelete() {
   if(!curId)return;
-  var n=null;for(var i=0;i<nodes.length;i++){if(nodes[i].id===curId){n=nodes[i];break;}}
-  if(db&&n&&n.firebaseId)await fbDelete(n.firebaseId);
-  else{nodes=nodes.filter(function(x){return x.id!==curId;});renderAll();}
+  var nodes=window.nodes||[];
+  var n=nodes.find(x=>x.id===curId);
+  if(window.DB&&n&&n.firebaseId)await fbDelete(n.firebaseId);
+  else{window.nodes=nodes.filter(x=>x.id!==curId);renderAll();}
   closeModal();toast('節點已刪除');
 }
-function modalBgClick(e){if(e.target===document.getElementById('modal'))closeModal();}
+function modalBg(e){if(e.target===document.getElementById('modal'))closeModal();}
 function closeModal(){document.getElementById('modal').classList.remove('on');document.body.style.overflow='';curId=null;}
-document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
 
 // ── TOAST ──
-function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');setTimeout(function(){t.classList.remove('on');},2500);}
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2500);}
 
 // ── INIT ──
-window.onload=function(){
-  renderAll();renderCust();
-  var params=new URLSearchParams(window.location.search);
-  var imported=params.get('import');
-  if(imported){
-    var decoded=decodeURIComponent(imported);
-    var input=document.getElementById('inp');
-    input.value=decoded;onInp(input);input.focus();
-    window.history.replaceState({},'',window.location.pathname);
+window.onload = function() {
+  window.nodes = window.nodes || [];
+  renderCust();
+  renderAll();
+  // Handle bookmarklet import
+  var params = new URLSearchParams(window.location.search);
+  var imported = params.get('import');
+  if (imported) {
+    var decoded = decodeURIComponent(imported);
+    var inp = document.getElementById('inp');
+    inp.value = decoded; onInp(inp); inp.focus();
+    window.history.replaceState({}, '', window.location.pathname);
   }
 };
 </script>
