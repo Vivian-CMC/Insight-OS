@@ -441,6 +441,7 @@ function initFirebase(){
       if(e.code!=='auth/no-current-user') console.log('redirect result:',e.message);
     });
     // Auth state listener
+    window._auth=auth;
     window._fb.onAuthStateChanged(auth,function(user){
       if(user){
         document.getElementById('sdot').classList.add('ok');
@@ -471,14 +472,22 @@ function initFirebase(){
         nodes=[];renderAll();
       }
     });
-    window._auth=auth;
   }catch(e){toast('初始化失敗：'+e.message);}
 }
 
 function handleLogin(){
-  if(!window._auth)return;
+  // If _auth not ready yet, wait and retry
+  if(!window._auth){
+    if(!window._fb){toast('Firebase 載入中，請稍後再試');return;}
+    try{
+      var app2=window._fb.initializeApp(FIREBASE_CFG,'ins-login-'+Date.now());
+      var auth2=window._fb.getAuth(app2);
+      var provider2=new window._fb.GoogleAuthProvider();
+      window._fb.signInWithRedirect(auth2,provider2);
+    }catch(e){toast('登入失敗：'+e.message);}
+    return;
+  }
   var provider=new window._fb.GoogleAuthProvider();
-  // Always use redirect - works on all devices including mobile browsers and WebViews
   window._fb.signInWithRedirect(window._auth,provider);
 }
 function handleLogout(){
