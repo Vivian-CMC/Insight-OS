@@ -715,7 +715,7 @@ function renderGrid(list) {
   var trkMap = {work:'Work',build:'Build',life:'Life',both:'',cmc:'CMC',fire:'Fire'};
   grid.innerHTML = fl.map((n,i) => {
     var key = nodeKey(n).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-    var src = n.sourceUrl ? '<a class="csrc" href="'+n.sourceUrl+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+n.sourceLabel+'</a>' : '<span class="csrct">'+(n.sourceLabel||'手動')+'</span>';
+    var src = n.sourceUrl ? '<a class="csrc" href="'+n.sourceUrl+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+(n.sourceLabel||'來源')+'</a>' : '<span></span>';
     var dt = n.createdAt ? n.createdAt.slice(0,10) : '';
     var trk = n.track==='both' ? '<span class="ctag t-work">Work</span><span class="ctag t-build">Build</span><span class="ctag t-life">Life</span>' : '<span class="ctag t-'+(n.track||'both')+'">'+(trkMap[n.track]||n.track)+'</span>';
     var tgs = (n.tags||[]).map(t=>'<span class="ctag '+(known.indexOf(t)>-1?t:'custom')+'">'+tl(t)+'</span>').join('');
