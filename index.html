@@ -457,6 +457,9 @@ var REVIEW_PROXY_URL = 'https://insight-os-review.vivian-cmc.workers.dev';
 
 function nodeKey(n) { return String((n && (n.firebaseId || n.id)) || ''); }
 function findNodeByKey(key) { return (window.nodes || []).find(n => nodeKey(n) === String(key)); }
+function cardExcerpt(n) {
+  return String((n && n.excerpt) || '').replace(/手動輸入節點。?/g, '').trim();
+}
 
 async function callReviewProxy(reqBody) {
   if (!REVIEW_PROXY_URL || REVIEW_PROXY_URL.indexOf('YOUR_SUBDOMAIN') > -1) {
@@ -719,7 +722,7 @@ function renderGrid(list) {
     var dt = n.createdAt ? n.createdAt.slice(0,10) : '';
     var trk = n.track==='both' ? '<span class="ctag t-work">Work</span><span class="ctag t-build">Build</span><span class="ctag t-life">Life</span>' : '<span class="ctag t-'+(n.track||'both')+'">'+(trkMap[n.track]||n.track)+'</span>';
     var tgs = (n.tags||[]).map(t=>'<span class="ctag '+(known.indexOf(t)>-1?t:'custom')+'">'+tl(t)+'</span>').join('');
-    return '<div class="card '+(n.track||'both')+'" style="animation-delay:'+i*.04+'s" onclick="openModal(\''+key+'\')"><div class="ctags">'+tgs+trk+'</div><div class="ctit">'+n.title+'</div><div class="cex">'+n.excerpt+'</div><div class="cft">'+src+'<span class="cdt">'+dt+'</span></div></div>';
+    return '<div class="card '+(n.track||'both')+'" style="animation-delay:'+i*.04+'s" onclick="openModal(\''+key+'\')"><div class="ctags">'+tgs+trk+'</div><div class="ctit">'+n.title+'</div><div class="cex">'+cardExcerpt(n)+'</div><div class="cft">'+src+'<span class="cdt">'+dt+'</span></div></div>';
   }).join('');
 }
 
