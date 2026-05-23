@@ -679,37 +679,13 @@ async function runReview(){
   _reviewRange=result.label;
   var summaryText=result.nodes.map(function(n){
     return '['+( n.track||'both')+']['+((n.tags||[]).join(','))+'] '+n.title+'：'+n.excerpt;
-  }).join('
-');
+  }).join('\n');
   var isQuarter=result.isQuarter;
-  var quarterSection=isQuarter?'
-
-【季度 Odyssey 對照】
-這段時間的行動，是否靠近長期目標方向':'';
+  var quarterSection=isQuarter?'\n\n【季度 Odyssey 對照】\n這段時間的行動，是否靠近長期目標方向':'';
   try{
     var res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,
-        system:'你是 Vivian 的個人知識助理。Vivian 是 HanchorBio CMC Executive Director，同時建立 Fire by Design 個人品牌，有豐富的生活感悟記錄。根據她這段時間的節點，用以下固定格式產出回顧（繁體中文）：
-
-【這段時間的主軸】
-2-3 個核心主題
-
-【浮現的模式】
-跨節點出現的重複想法或感受
-
-【未解的問題】
-question 標籤的節點，或還沒有答案的懸念
-
-【可行動項目】
-具體可做的事，不超過 3 條
-
-【值得深化的洞察】
-最有潛力繼續發展的 1-2 個想法'+quarterSection,
-        messages:[{role:'user',content:'回顧區間：'+result.label+'
-
-節點清單：
-'+summaryText}]})
+            body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,system:'你是 Vivian 的個人知識助理。根據她這段時間的節點，用固定格式產出回顧（繁體中文）：\n\n【這段時間的主軸】\n2-3個核心主題\n\n【浮現的模式】\n跨節點重複的想法或感受\n\n【未解的問題】\nquestion標籤的節點\n\n【可行動項目】\n具體可做的事不超過3條\n\n【值得深化的洞察】\n最有潛力的1-2個想法'+quarterSection,messages:[{role:'user',content:'回顧區間：'+result.label+'\n\n節點清單：\n'+summaryText}]})
     });
     var data=await res.json();
     var t2=data.content&&data.content.find(function(c){return c.type==='text';});
