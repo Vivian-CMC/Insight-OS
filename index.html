@@ -291,7 +291,7 @@ textarea.mta:focus{outline:none;border-color:var(--a);}
           <div class="sc t"><div class="sn" id="sT">0</div><div class="sl">總節點數</div></div>
           <div class="sc ca"><div class="sn" id="sC">0</div><div class="sl">Work</div></div>
           <div class="sc fi"><div class="sn" id="sF">0</div><div class="sl">Build</div></div>
-          <div class="sc ap"><div class="sn" id="sA">0</div><div class="sl">可應用項目</div></div>
+          <div class="sc" style="border:1px solid var(--bdr);border-radius:9px;padding:12px 14px;position:relative;overflow:hidden;"><div class="sn" id="sL" style="color:#6a7fc1;font-family:'DM Serif Display',serif;font-size:24px;line-height:1;margin-bottom:3px;">0</div><div class="sl">Life</div><div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:#6a7fc1"></div></div>
         </div>
         <div class="frow">
           <div class="ftit">節點庫</div>
@@ -617,7 +617,8 @@ function renderStats(){
   document.getElementById('sT').textContent=nodes.length;
   document.getElementById('sC').textContent=nodes.filter(function(n){return n.track==='work'||n.track==='both';}).length;
   document.getElementById('sF').textContent=nodes.filter(function(n){return n.track==='build'||n.track==='both';}).length;
-  document.getElementById('sA').textContent=nodes.filter(function(n){return n.tags&&n.tags.indexOf('apply')>-1;}).length;
+  var sL=document.getElementById('sL');if(sL)sL.textContent=nodes.filter(function(n){return n.track==='life'||n.track==='both';}).length;
+  var sA=document.getElementById('sA');if(sA)sA.textContent=nodes.filter(function(n){return n.tags&&n.tags.indexOf('apply')>-1;}).length;
   var cntWork=document.getElementById('cnt-work');
   var cntBuild=document.getElementById('cnt-build');
   var cntLife=document.getElementById('cnt-life');
@@ -638,7 +639,7 @@ function renderGrid(list){
     var knownTags=['tool','concept','apply','insight','question','reference','dialogue','review'];
     var tgs=(n.tags||[]).map(function(t){return '<span class="ctag '+(knownTags.indexOf(t)>-1?t:'custom')+'">'+tl(t)+'</span>';}).join('');
     var cardTrack=n.track||'both';
-    return '<div class="card '+cardTrack+" style="animation-delay:'+i*.04+'s" onclick="openModal('+n.id+')"><div class="ctags">'+tgs+trk+'</div><div class="ctit">'+n.title+'</div><div class="cex">'+n.excerpt+'</div><div class="cft">'+src+'<span class="cdt">'+dt+'</span></div></div>';
+    return '<div class="card '+cardTrack+'" style="animation-delay:'+i*.04+'s" onclick="openModal('+n.id+')"><div class="ctags">'+tgs+trk+'</div><div class="ctit">'+n.title+'</div><div class="cex">'+n.excerpt+'</div><div class="cft">'+src+'<span class="cdt">'+dt+'</span></div></div>';
   }).join('');
 }
 
