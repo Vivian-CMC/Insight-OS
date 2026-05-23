@@ -116,9 +116,10 @@ textarea.mta:focus{outline:none;border-color:var(--a);}
 .card:hover{border-color:var(--bdm);transform:translateY(-1px);box-shadow:0 4px 14px rgba(74,100,160,.07);}
 @keyframes cardIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 .card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
-.card.cmc::before{background:var(--a);opacity:.55}
-.card.fire::before{background:var(--b);opacity:.55}
-.card.both::before{background:linear-gradient(90deg,var(--a),var(--b));opacity:.65}
+.card.work::before{background:#4a7fc1;opacity:.55}
+.card.build::before{background:#c17a4a;opacity:.55}
+.card.life::before{background:#6a7fc1;opacity:.55}
+.card.both::before{background:linear-gradient(90deg,#4a7fc1,#6a7fc1);opacity:.65}
 .ctags{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:7px;}
 .ctag{font-size:8px;letter-spacing:.07em;text-transform:uppercase;padding:1px 5px;border-radius:3px;}
 .ctag.tool,.ctag.concept{background:rgba(106,127,193,.1);color:var(--c);border:1px solid rgba(106,127,193,.18);}
@@ -126,12 +127,20 @@ textarea.mta:focus{outline:none;border-color:var(--a);}
 .ctag.t-cmc{background:rgba(74,127,193,.08);color:var(--a);border:1px solid rgba(74,127,193,.15);}
 .ctag.t-fire{background:rgba(193,122,74,.08);color:var(--b);border:1px solid rgba(193,122,74,.15);}
 .ctag.custom{background:rgba(106,127,193,.06);color:var(--c);border:1px solid rgba(106,127,193,.12);}
+.ctag.insight{background:rgba(106,127,193,.08);color:var(--c);border:1px solid rgba(106,127,193,.15);}
+.ctag.question{background:rgba(193,122,74,.08);color:var(--b);border:1px solid rgba(193,122,74,.15);}
+.ctag.reference{background:rgba(150,160,184,.08);color:var(--txm);border:1px solid rgba(150,160,184,.2);}
+.ctag.dialogue{background:rgba(74,127,193,.06);color:var(--a);border:1px solid rgba(74,127,193,.12);}
+.ctag.review{background:rgba(76,175,125,.08);color:#4caf7d;border:1px solid rgba(76,175,125,.2);}
+.ctag.t-work{background:rgba(74,127,193,.08);color:var(--a);border:1px solid rgba(74,127,193,.15);}
+.ctag.t-build{background:rgba(193,122,74,.08);color:var(--b);border:1px solid rgba(193,122,74,.15);}
+.ctag.t-life{background:rgba(106,127,193,.08);color:var(--c);border:1px solid rgba(106,127,193,.15);}
 .ctit{font-size:12px;color:var(--tx);line-height:1.5;margin-bottom:6px;}
 .cex{font-size:11px;color:var(--txm);line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
 .cft{display:flex;align-items:center;justify-content:space-between;margin-top:9px;padding-top:7px;border-top:1px solid var(--bdr);gap:4px;}
-.csrc{font-size:9px;color:var(--a);text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:110px;}
-.csrc:hover{text-decoration:underline;}
-.csrct{font-size:9px;color:var(--txd);}
+.csrc{font-size:9px;color:var(--txd);text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:110px;opacity:.6;}
+.csrc:hover{text-decoration:underline;opacity:1;}
+.csrct{font-size:9px;color:var(--txd);opacity:.5;}
 .cdt{font-size:9px;color:var(--txd);}
 .empty{text-align:center;padding:40px;color:var(--txd);}
 /* FLOW */
@@ -196,8 +205,9 @@ textarea.mta:focus{outline:none;border-color:var(--a);}
     <div class="ssec">
       <div class="slabel">Track</div>
       <div class="tpills">
-        <div class="tpill cmc" onclick="filterByTrack('cmc')"><span>CMC 知識工作</span><span class="tcnt" id="cnt-cmc">0</span></div>
-        <div class="tpill fire" onclick="filterByTrack('fire')"><span>Fire by Design</span><span class="tcnt" id="cnt-fire">0</span></div>
+        <div class="tpill cmc" onclick="filterByTrack('work')"><span>Work</span><span class="tcnt" id="cnt-work">0</span></div>
+        <div class="tpill fire" onclick="filterByTrack('build')"><span>Build</span><span class="tcnt" id="cnt-build">0</span></div>
+        <div class="tpill" style="border-left:3px solid #6a7fc1" onclick="filterByTrack('life')"><span>Life</span><span class="tcnt" id="cnt-life">0</span></div>
       </div>
     </div>
     <div class="ssec">
@@ -209,7 +219,7 @@ textarea.mta:focus{outline:none;border-color:var(--a);}
     </div>
     <div class="ssec">
       <div class="slabel">摘要</div>
-      <div class="nav-item" onclick="runWeeklySummary()"><span class="ndot" style="background:var(--b)"></span>產生週摘要</div>
+      <div class="nav-item" onclick="showReviewPanel()"><span class="ndot" style="background:var(--b)"></span>回顧 / 摘要</div>
     </div>
   </aside>
   <main class="main">
@@ -228,8 +238,13 @@ textarea.mta:focus{outline:none;border-color:var(--a);}
             <button class="qt" id="qt-tool" onclick="togQt(this,'tool')">工具</button>
             <button class="qt" id="qt-concept" onclick="togQt(this,'concept')">概念</button>
             <button class="qt" id="qt-apply" onclick="togQt(this,'apply')">可應用</button>
-            <button class="qt" id="qt-cmc" onclick="togQt(this,'cmc')">CMC</button>
-            <button class="qt" id="qt-fire" onclick="togQt(this,'fire')">Fire</button>
+            <button class="qt" id="qt-insight" onclick="togQt(this,'insight')">洞察</button>
+            <button class="qt" id="qt-question" onclick="togQt(this,'question')">問題</button>
+            <button class="qt" id="qt-reference" onclick="togQt(this,'reference')">參考</button>
+            <button class="qt" id="qt-dialogue" onclick="togQt(this,'dialogue')">對話</button>
+            <button class="qt" id="qt-work" onclick="togQt(this,'work')">Work</button>
+            <button class="qt" id="qt-build" onclick="togQt(this,'build')">Build</button>
+            <button class="qt" id="qt-life" onclick="togQt(this,'life')">Life</button>
             <span id="custEl"></span>
             <span class="qadd-wrap">
               <button class="qadd" id="qaddBtn" onclick="showAddInp()">＋</button>
@@ -246,12 +261,36 @@ textarea.mta:focus{outline:none;border-color:var(--a);}
       <div class="chips" id="echips"></div>
       <button class="bsv2" id="esave" onclick="saveAll()" style="display:none">＋ 全部加入節點庫</button>
     </div>
+    <!-- REVIEW PANEL -->
+    <div class="ep" id="reviewPanel" style="display:none">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
+        <span style="font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--a)">回顧區間</span>
+        <select id="reviewPreset" onchange="onReviewPreset()" style="font-size:11px;padding:3px 8px;border:1px solid var(--bdm);border-radius:6px;background:var(--bg);color:var(--tx);font-family:inherit;">
+          <option value="7">過去 7 天</option>
+          <option value="30">過去 30 天</option>
+          <option value="90">過去 90 天（季度）</option>
+          <option value="custom">自訂區間</option>
+        </select>
+        <span id="customDateRow" style="display:none;align-items:center;gap:5px;font-size:11px;">
+          <input type="date" id="reviewFrom" style="font-size:11px;padding:3px 7px;border:1px solid var(--bdm);border-radius:6px;background:var(--bg);color:var(--tx);">
+          <span style="color:var(--txd)">→</span>
+          <input type="date" id="reviewTo" style="font-size:11px;padding:3px 7px;border:1px solid var(--bdm);border-radius:6px;background:var(--bg);color:var(--tx);">
+        </span>
+        <button onclick="runReview()" style="font-size:11px;padding:4px 14px;border-radius:6px;background:var(--a);color:#fff;border:none;cursor:pointer;font-family:inherit;">產生回顧</button>
+        <button onclick="hideReviewPanel()" style="font-size:11px;padding:4px 10px;border-radius:6px;background:none;border:1px solid var(--bdm);color:var(--txm);cursor:pointer;font-family:inherit;">收起</button>
+      </div>
+      <div id="reviewResult" style="display:none">
+        <div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--a);margin-bottom:7px" id="reviewHdr"></div>
+        <div id="reviewContent" style="font-size:12px;color:var(--tx);line-height:1.8;white-space:pre-wrap;background:var(--s2);border:1px solid var(--bdr);border-radius:8px;padding:14px;max-height:320px;overflow-y:auto;"></div>
+        <button onclick="saveReviewAsCard()" style="margin-top:9px;font-size:11px;padding:5px 14px;border-radius:6px;background:none;border:1px solid var(--a);color:var(--a);cursor:pointer;font-family:inherit;">＋ 存成回顧卡片</button>
+      </div>
+    </div>
     <div class="content-area" id="contentArea">
       <div id="libraryView">
         <div class="stats">
           <div class="sc t"><div class="sn" id="sT">0</div><div class="sl">總節點數</div></div>
-          <div class="sc ca"><div class="sn" id="sC">0</div><div class="sl">CMC Track</div></div>
-          <div class="sc fi"><div class="sn" id="sF">0</div><div class="sl">Fire Track</div></div>
+          <div class="sc ca"><div class="sn" id="sC">0</div><div class="sl">Work</div></div>
+          <div class="sc fi"><div class="sn" id="sF">0</div><div class="sl">Build</div></div>
           <div class="sc ap"><div class="sn" id="sA">0</div><div class="sl">可應用項目</div></div>
         </div>
         <div class="frow">
@@ -261,6 +300,10 @@ textarea.mta:focus{outline:none;border-color:var(--a);}
             <button class="fb" id="fb-tool" onclick="filterByType('tool')">工具</button>
             <button class="fb" id="fb-concept" onclick="filterByType('concept')">概念</button>
             <button class="fb" id="fb-apply" onclick="filterByType('apply')">可應用</button>
+            <button class="fb" id="fb-insight" onclick="filterByType('insight')">洞察</button>
+            <button class="fb" id="fb-question" onclick="filterByType('question')">問題</button>
+            <button class="fb" id="fb-dialogue" onclick="filterByType('dialogue')">對話</button>
+            <button class="fb" id="fb-review" onclick="filterByType('review')">回顧</button>
           </div>
         </div>
         <div class="grid" id="grid"></div>
@@ -352,8 +395,8 @@ textarea.mta:focus{outline:none;border-color:var(--a);}
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getDatabase, ref, push, onValue, remove, update } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
-import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-window._fb = { initializeApp, getDatabase, ref, push, onValue, remove, update, getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut };
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+window._fb = { initializeApp, getDatabase, ref, push, onValue, remove, update, getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut };
 window.dispatchEvent(new Event('fb-ready'));
 </script>
 
@@ -387,6 +430,10 @@ function initFirebase(){
     var app=window._fb.initializeApp(FIREBASE_CFG,'ins-'+Date.now());
     db=window._fb.getDatabase(app);
     var auth=window._fb.getAuth(app);
+    // Handle redirect result (mobile login)
+    window._fb.getRedirectResult(auth).catch(function(e){
+      if(e.code!=='auth/no-current-user') console.log('redirect result:',e.message);
+    });
     // Auth state listener
     window._fb.onAuthStateChanged(auth,function(user){
       if(user){
@@ -425,7 +472,15 @@ function initFirebase(){
 function handleLogin(){
   if(!window._auth)return;
   var provider=new window._fb.GoogleAuthProvider();
-  window._fb.signInWithPopup(window._auth,provider).catch(function(e){toast('登入失敗：'+e.message);});
+  var isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if(isMobile){
+    window._fb.signInWithRedirect(window._auth,provider);
+  } else {
+    window._fb.signInWithPopup(window._auth,provider).catch(function(e){
+      // Fallback to redirect if popup fails
+      window._fb.signInWithRedirect(window._auth,provider);
+    });
+  }
 }
 function handleLogout(){
   if(!window._auth)return;
@@ -456,7 +511,7 @@ function onKD(e){if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault();
 function clearUrl(){detUrl=null;document.getElementById('ubar').classList.remove('on');var i=document.getElementById('inp');i.value=i.value.replace(/(https?:\/\/[^\s]+)/g,'').trim();}
 
 // ── QUICK TAGS ──
-var qtC={tool:'#4a7fc1',concept:'#6a7fc1',apply:'#b84a6a',cmc:'#4a7fc1',fire:'#c17a4a'};
+var qtC={tool:'#4a7fc1',concept:'#6a7fc1',apply:'#b84a6a',insight:'#6a7fc1',question:'#c17a4a',reference:'#96a0b8',dialogue:'#4a7fc1',review:'#4caf7d',work:'#4a7fc1',build:'#c17a4a',life:'#6a7fc1'};
 function togQt(btn,tag){
   if(actQt[tag]){delete actQt[tag];btn.style.background='none';btn.style.color='#5a6480';btn.style.border='1px solid rgba(90,110,150,0.22)';}
   else{actQt[tag]=true;var c=qtC[tag]||'#6a7fc1';btn.style.background=c;btn.style.color='#fff';btn.style.border='1px solid '+c;}
@@ -485,7 +540,7 @@ function confirmAddTag(){
 }
 
 // ── EXTRACT ──
-function tl(t){return{tool:'工具',concept:'概念',apply:'可應用',cmc:'CMC',fire:'Fire'}[t]||t;}
+function tl(t){return{tool:'工具',concept:'概念',apply:'可應用',insight:'洞察',question:'問題',reference:'參考',dialogue:'對話',review:'回顧',work:'Work',build:'Build',life:'Life'}[t]||t;}
 function doExtract(){
   var raw=document.getElementById('inp').value.trim();if(!raw)return;
   var ep=document.getElementById('ep'),eh=document.getElementById('eh'),ec=document.getElementById('echips'),es=document.getElementById('esave');
@@ -495,7 +550,7 @@ function doExtract(){
   fetch('https://api.anthropic.com/v1/messages',{
     method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
-      system:'你是 Vivian 的個人 AI 洞察節點萃取器。Vivian 是 HanchorBio CMC Executive Director，同時在建立 Fire by Design 個人品牌（biotech insider mentor + body management systems educator）。從輸入中萃取 2-4 個關鍵節點。每個節點：title（繁中20字內，精準描述核心概念）、excerpt（40字內，具體可操作）、tags（"tool"/"concept"/"apply"）、track（"cmc"/"fire"/"both"）。'+hint+'優先萃取行動導向洞察。只回傳 JSON 陣列，不含其他文字。格式：[{"title":"...","excerpt":"...","tags":["concept"],"track":"both"}]',
+      system:'你是 Vivian 的個人 AI 洞察節點萃取器。Vivian 是 HanchorBio CMC Executive Director，同時在建立 Fire by Design 個人品牌，並有豐富的生活感悟和個人成長記錄。從輸入中萃取 2-4 個關鍵節點。每個節點：title（繁中20字內，精準描述核心概念）、excerpt（40字內，具體可操作）、tags（可選："tool"/"concept"/"apply"/"insight"/"question"/"reference"/"dialogue"）、track（"work"=CMC/工作相關，"build"=內容創作/品牌/副業，"life"=生活/感悟/身體/家庭，"both"=跨領域）。'+hint+'優先萃取行動導向洞察。只回傳 JSON 陣列，不含其他文字。格式：[{"title":"...","excerpt":"...","tags":["insight"],"track":"life"}]',
       messages:[{role:'user',content:text||raw}]})
   }).then(function(r){return r.json();}).then(function(d){
     var t2=d.content&&d.content.find(function(c){return c.type==='text';});
@@ -560,11 +615,15 @@ async function runWeeklySummary(){
 function renderAll(){renderStats();renderGrid();}
 function renderStats(){
   document.getElementById('sT').textContent=nodes.length;
-  document.getElementById('sC').textContent=nodes.filter(function(n){return n.track==='cmc'||n.track==='both';}).length;
-  document.getElementById('sF').textContent=nodes.filter(function(n){return n.track==='fire'||n.track==='both';}).length;
+  document.getElementById('sC').textContent=nodes.filter(function(n){return n.track==='work'||n.track==='both';}).length;
+  document.getElementById('sF').textContent=nodes.filter(function(n){return n.track==='build'||n.track==='both';}).length;
   document.getElementById('sA').textContent=nodes.filter(function(n){return n.tags&&n.tags.indexOf('apply')>-1;}).length;
-  document.getElementById('cnt-cmc').textContent=nodes.filter(function(n){return n.track==='cmc'||n.track==='both';}).length;
-  document.getElementById('cnt-fire').textContent=nodes.filter(function(n){return n.track==='fire'||n.track==='both';}).length;
+  var cntWork=document.getElementById('cnt-work');
+  var cntBuild=document.getElementById('cnt-build');
+  var cntLife=document.getElementById('cnt-life');
+  if(cntWork)cntWork.textContent=nodes.filter(function(n){return n.track==='work'||n.track==='both';}).length;
+  if(cntBuild)cntBuild.textContent=nodes.filter(function(n){return n.track==='build'||n.track==='both';}).length;
+  if(cntLife)cntLife.textContent=nodes.filter(function(n){return n.track==='life'||n.track==='both';}).length;
 }
 function renderGrid(list){
   var grid=document.getElementById('grid');
@@ -574,9 +633,12 @@ function renderGrid(list){
   grid.innerHTML=fl.map(function(n,i){
     var src=n.sourceUrl?'<a class="csrc" href="'+n.sourceUrl+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+n.sourceLabel+'</a>':'<span class="csrct">'+(n.sourceLabel||'手動')+'</span>';
     var dt=n.createdAt?n.createdAt.slice(0,10):'';
-    var trk=n.track==='both'?'<span class="ctag t-cmc">CMC</span><span class="ctag t-fire">Fire</span>':'<span class="ctag t-'+n.track+'">'+(n.track==='cmc'?'CMC':'Fire')+'</span>';
-    var tgs=(n.tags||[]).map(function(t){return '<span class="ctag '+(['tool','concept','apply'].indexOf(t)>-1?t:'custom')+'">'+tl(t)+'</span>';}).join('');
-    return '<div class="card '+n.track+'" style="animation-delay:'+i*.04+'s" onclick="openModal('+n.id+')"><div class="ctags">'+tgs+trk+'</div><div class="ctit">'+n.title+'</div><div class="cex">'+n.excerpt+'</div><div class="cft">'+src+'<span class="cdt">'+dt+'</span></div></div>';
+    var trkMap={work:'Work',build:'Build',life:'Life',both:'',cmc:'CMC',fire:'Fire'};
+    var trk=n.track==='both'?'<span class="ctag t-work">Work</span><span class="ctag t-build">Build</span><span class="ctag t-life">Life</span>':'<span class="ctag t-'+(n.track||'both')+'">'+(trkMap[n.track]||n.track)+'</span>';
+    var knownTags=['tool','concept','apply','insight','question','reference','dialogue','review'];
+    var tgs=(n.tags||[]).map(function(t){return '<span class="ctag '+(knownTags.indexOf(t)>-1?t:'custom')+'">'+tl(t)+'</span>';}).join('');
+    var cardTrack=n.track||'both';
+    return '<div class="card '+cardTrack+" style="animation-delay:'+i*.04+'s" onclick="openModal('+n.id+')"><div class="ctags">'+tgs+trk+'</div><div class="ctit">'+n.title+'</div><div class="cex">'+n.excerpt+'</div><div class="cft">'+src+'<span class="cdt">'+dt+'</span></div></div>';
   }).join('');
 }
 
@@ -591,7 +653,7 @@ function filterByTrack(track){
   actFlt=null;
   document.querySelectorAll('.fb').forEach(function(b){b.classList.remove('on');});
   document.getElementById('fb-all').classList.add('on');
-  renderGrid(nodes.filter(function(n){return n.track===track||n.track==='both';}));
+  renderGrid(nodes.filter(function(n){return n.track===track||n.track==='both'||n.track===track;}));
 }
 
 // ── VIEW SWITCH ──
@@ -616,14 +678,15 @@ function openModal(id){
   document.getElementById('mT').value=n.title||'';
   document.getElementById('mE').value=n.excerpt||'';
   // Tag toggles
-  var allTags=['tool','concept','apply'].concat(custTags);
+  var allTags=['tool','concept','apply','insight','question','reference','dialogue'].concat(custTags);
   var tc=document.getElementById('mTags');tc.innerHTML='';
   allTags.forEach(function(t){
     var btn=document.createElement('button');
     btn.textContent=tl(t);btn.setAttribute('data-tag',t);
     btn.style.cssText='font-size:11px;padding:5px 14px;border-radius:6px;cursor:pointer;font-family:inherit;transition:all .12s;';
     var on=(n.tags||[]).indexOf(t)>-1;
-    var colors=t==='apply'?{bg:'#b84a6a',c:'#fff',b:'#b84a6a'}:{bg:'#6a7fc1',c:'#fff',b:'#6a7fc1'};
+    var tagColorMap={apply:{bg:'#b84a6a',c:'#fff',b:'#b84a6a'},question:{bg:'#c17a4a',c:'#fff',b:'#c17a4a'},reference:{bg:'#96a0b8',c:'#fff',b:'#96a0b8'},review:{bg:'#4caf7d',c:'#fff',b:'#4caf7d'}};
+    var colors=tagColorMap[t]||{bg:'#6a7fc1',c:'#fff',b:'#6a7fc1'};
     if(on){btn.style.background=colors.bg;btn.style.color=colors.c;btn.style.border='1px solid '+colors.b;}
     else{btn.style.background='#edf0f5';btn.style.color='#5a6480';btn.style.border='1px solid rgba(90,110,150,0.22)';}
     btn.setAttribute('data-on',on?'1':'0');
@@ -635,7 +698,7 @@ function openModal(id){
     tc.appendChild(btn);
   });
   // Track toggles
-  var trDefs=[{v:'cmc',l:'CMC',bg:'#4a7fc1'},{v:'fire',l:'Fire',bg:'#c17a4a'},{v:'both',l:'兩者',bg:'#6a7fc1'}];
+  var trDefs=[{v:'work',l:'Work',bg:'#4a7fc1'},{v:'build',l:'Build',bg:'#c17a4a'},{v:'life',l:'Life',bg:'#6a7fc1'},{v:'both',l:'全部',bg:'#4caf7d'}];
   var trc=document.getElementById('mTr');trc.innerHTML='';
   trDefs.forEach(function(tr){
     var btn=document.createElement('button');
