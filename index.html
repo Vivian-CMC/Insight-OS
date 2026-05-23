@@ -421,8 +421,16 @@ window._db = db_inst;
 window._auth = auth_inst;
 window._fbFns = { ref, push, onValue, remove, update, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut, GoogleAuthProvider };
 
-// Handle redirect result first
-getRedirectResult(auth_inst).catch(()=>{});
+// Handle redirect result - process login after Google redirect
+getRedirectResult(auth_inst).then(function(result){
+  if(result && result.user){
+    console.log('Redirect login success:', result.user.displayName);
+  }
+}).catch(function(e){
+  if(e.code !== 'auth/no-current-user'){
+    console.log('Redirect error:', e.code, e.message);
+  }
+});
 
 // Auth state
 onAuthStateChanged(auth_inst, function(user){
@@ -434,24 +442,23 @@ onAuthStateChanged(auth_inst, function(user){
     onValue(ref(db_inst,'cmc_nodes'), function(snap){
       const data = snap.val();
       if(data){
-        window._nodes = Object.entries(data).map(([id,v])=>({
+        const newNodes = Object.entries(data).map(([id,v])=>({
           ...v, firebaseId:id,
           tags: Array.isArray(v.tags)?v.tags:Object.values(v.tags||{}),
           track: v.track||'both'
         }));
-        window._nodes.sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''));
+        newNodes.sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''));
+        if(window._onNodesUpdate) window._onNodesUpdate(newNodes);
       } else {
-        window._nodes = [];
+        if(window._onNodesUpdate) window._onNodesUpdate([]);
       }
-      if(window._renderAll) window._renderAll();
     });
   } else {
     document.getElementById('sdot').classList.remove('ok');
     document.getElementById('stxt').textContent = '未登入';
     document.getElementById('loginBtn').style.display = '';
     document.getElementById('logoutBtn').style.display = 'none';
-    window._nodes = [];
-    if(window._renderAll) window._renderAll();
+    if(window._onNodesUpdate) window._onNodesUpdate([]);
   }
 });
 
@@ -465,19 +472,15 @@ var db=null;
 
 // Sync nodes from module
 window.addEventListener('fb-module-ready', function(){
-  // db reference for saves
   db = window._db;
-  // sync any nodes already loaded
-  if(window._nodes) nodes = window._nodes;
   renderAll();
 });
 
-// Keep nodes in sync whenever Firebase updates
-Object.defineProperty(window, '_nodes', {
-  set: function(v){ nodes = v; },
-  get: function(){ return nodes; },
-  configurable: true
-});
+// Called by module when Firebase data updates
+window._onNodesUpdate = function(newNodes){
+  nodes = newNodes;
+  if(typeof renderAll === 'function') renderAll();
+};
 
 function connectFirebase(){ toast('設定已內建，自動連線中'); }
 function loadCfg(){ return {}; }
@@ -722,7 +725,7 @@ async function saveReviewAsCard(){
 }
 
 // ── RENDER ──
-function renderAll(){nodes=window._nodes||nodes;renderStats();renderGrid();}window._renderAll=renderAll;
+function renderAll(){renderStats();renderGrid();}window._renderAll=renderAll;
 function renderStats(){
   document.getElementById('sT').textContent=nodes.length;
   document.getElementById('sC').textContent=nodes.filter(function(n){return n.track==='work'||n.track==='both';}).length;
