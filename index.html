@@ -401,19 +401,9 @@ textarea.mta:focus{outline:none;border-color:var(--a);}
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getDatabase, ref, push, onValue, remove, update } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-window._fb = { initializeApp, getDatabase, ref, push, onValue, remove, update, getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut };
-window.dispatchEvent(new Event('fb-ready'));
-</script>
+import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
-<script>
-var nodes=[], pending=[], curId=null, detUrl=null, actFlt=null, actQt={};
-var custTags=JSON.parse(localStorage.getItem('ins-ct')||'[]');
-var db=null, fbReady=false;
-
-// ── FIREBASE ──
-// ── HARDCODED FIREBASE CONFIG ──
-var FIREBASE_CFG = {
+const FIREBASE_CFG = {
   apiKey: "AIzaSyATSS91GrFSXXF1NLMis9Z_OELgWbxwaEw",
   authDomain: "vivian-os.firebaseapp.com",
   databaseURL: "https://vivian-os-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -422,89 +412,102 @@ var FIREBASE_CFG = {
   appId: "1:741967247175:web:72ab527f8aa21842f4fe62"
 };
 
-window.addEventListener('fb-ready',function(){
-  fbReady=true;
-  initFirebase();
-});
-if(window._fb){ fbReady=true; initFirebase(); }
+const app = initializeApp(FIREBASE_CFG);
+const db_inst = getDatabase(app);
+const auth_inst = getAuth(app);
 
-function loadCfg(){return FIREBASE_CFG;}
-function connectFirebase(){ toast('設定已內建，自動連線中'); }
+// Expose to global scope for the main script
+window._db = db_inst;
+window._auth = auth_inst;
+window._fbFns = { ref, push, onValue, remove, update, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut, GoogleAuthProvider };
 
-function initFirebase(){
-  try{
-    var app=window._fb.initializeApp(FIREBASE_CFG,'ins-'+Date.now());
-    db=window._fb.getDatabase(app);
-    var auth=window._fb.getAuth(app);
-    // Handle redirect result (mobile login)
-    window._fb.getRedirectResult(auth).catch(function(e){
-      if(e.code!=='auth/no-current-user') console.log('redirect result:',e.message);
-    });
-    // Auth state listener
-    window._auth=auth;
-    window._fb.onAuthStateChanged(auth,function(user){
-      if(user){
-        document.getElementById('sdot').classList.add('ok');
-        document.getElementById('stxt').textContent=user.displayName||'已登入';
-        document.getElementById('loginBtn').style.display='none';
-        document.getElementById('logoutBtn').style.display='';
-        // Load data
-        window._fb.onValue(window._fb.ref(db,'cmc_nodes'),function(snap){
-          var data=snap.val();
-          if(data){
-            nodes=Object.entries(data).map(function(e){
-              var v=e[1];
-              return Object.assign({},v,{
-                firebaseId:e[0],
-                tags:Array.isArray(v.tags)?v.tags:Object.values(v.tags||{}),
-                track:v.track||'both'
-              });
-            });
-            nodes.sort(function(a,b){return(b.createdAt||'').localeCompare(a.createdAt||'');});
-          } else nodes=[];
-          renderAll();
-        });
+// Handle redirect result first
+getRedirectResult(auth_inst).catch(()=>{});
+
+// Auth state
+onAuthStateChanged(auth_inst, function(user){
+  if(user){
+    document.getElementById('sdot').classList.add('ok');
+    document.getElementById('stxt').textContent = user.displayName || '已登入';
+    document.getElementById('loginBtn').style.display = 'none';
+    document.getElementById('logoutBtn').style.display = '';
+    onValue(ref(db_inst,'cmc_nodes'), function(snap){
+      const data = snap.val();
+      if(data){
+        window._nodes = Object.entries(data).map(([id,v])=>({
+          ...v, firebaseId:id,
+          tags: Array.isArray(v.tags)?v.tags:Object.values(v.tags||{}),
+          track: v.track||'both'
+        }));
+        window._nodes.sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''));
       } else {
-        document.getElementById('sdot').classList.remove('ok');
-        document.getElementById('stxt').textContent='未登入';
-        document.getElementById('loginBtn').style.display='';
-        document.getElementById('logoutBtn').style.display='none';
-        nodes=[];renderAll();
+        window._nodes = [];
       }
+      if(window._renderAll) window._renderAll();
     });
-  }catch(e){toast('初始化失敗：'+e.message);}
-}
+  } else {
+    document.getElementById('sdot').classList.remove('ok');
+    document.getElementById('stxt').textContent = '未登入';
+    document.getElementById('loginBtn').style.display = '';
+    document.getElementById('logoutBtn').style.display = 'none';
+    window._nodes = [];
+    if(window._renderAll) window._renderAll();
+  }
+});
+
+window.dispatchEvent(new Event('fb-module-ready'));
+</script>
+
+<script>
+var nodes=[], pending=[], curId=null, detUrl=null, actFlt=null, actQt={};
+var custTags=JSON.parse(localStorage.getItem('ins-ct')||'[]');
+var db=null;
+
+// Sync nodes from module
+window.addEventListener('fb-module-ready', function(){
+  // db reference for saves
+  db = window._db;
+  // sync any nodes already loaded
+  if(window._nodes) nodes = window._nodes;
+  renderAll();
+});
+
+// Keep nodes in sync whenever Firebase updates
+Object.defineProperty(window, '_nodes', {
+  set: function(v){ nodes = v; },
+  get: function(){ return nodes; },
+  configurable: true
+});
+
+function connectFirebase(){ toast('設定已內建，自動連線中'); }
+function loadCfg(){ return {}; }
 
 function handleLogin(){
-  // If _auth not ready yet, wait and retry
-  if(!window._auth){
-    if(!window._fb){toast('Firebase 載入中，請稍後再試');return;}
-    try{
-      var app2=window._fb.initializeApp(FIREBASE_CFG,'ins-login-'+Date.now());
-      var auth2=window._fb.getAuth(app2);
-      var provider2=new window._fb.GoogleAuthProvider();
-      window._fb.signInWithRedirect(auth2,provider2);
-    }catch(e){toast('登入失敗：'+e.message);}
+  if(!window._auth || !window._fbFns){
+    toast('Firebase 載入中，請稍後再試');
     return;
   }
-  var provider=new window._fb.GoogleAuthProvider();
-  window._fb.signInWithRedirect(window._auth,provider);
+  const provider = new window._fbFns.GoogleAuthProvider();
+  window._fbFns.signInWithRedirect(window._auth, provider);
 }
 function handleLogout(){
-  if(!window._auth)return;
-  window._fb.signOut(window._auth).then(function(){toast('已登出');});
+  if(!window._auth || !window._fbFns) return;
+  window._fbFns.signOut(window._auth).then(()=>toast('已登出'));
 }
 async function fbSave(node){
-  if(!db)return false;
-  try{await window._fb.push(window._fb.ref(db,'cmc_nodes'),node);return true;}catch{return false;}
+  var d=window._db||db;var f=window._fbFns;
+  if(!d||!f)return false;
+  try{await f.push(f.ref(d,'cmc_nodes'),node);return true;}catch(e){return false;}
 }
 async function fbUpdate(fid,data){
-  if(!db||!fid)return;
-  try{await window._fb.update(window._fb.ref(db,'cmc_nodes/'+fid),data);}catch{}
+  var d=window._db||db;var f=window._fbFns;
+  if(!d||!f||!fid)return;
+  try{await f.update(f.ref(d,'cmc_nodes/'+fid),data);}catch(e){}
 }
 async function fbDelete(fid){
-  if(!db||!fid)return;
-  try{await window._fb.remove(window._fb.ref(db,'cmc_nodes/'+fid));}catch{}
+  var d=window._db||db;var f=window._fbFns;
+  if(!d||!f||!fid)return;
+  try{await f.remove(f.ref(d,'cmc_nodes/'+fid));}catch(e){}
 }
 
 // ── URL ──
@@ -743,7 +746,7 @@ async function saveReviewAsCard(){
 }
 
 // ── RENDER ──
-function renderAll(){renderStats();renderGrid();}
+function renderAll(){nodes=window._nodes||nodes;renderStats();renderGrid();}window._renderAll=renderAll;
 function renderStats(){
   document.getElementById('sT').textContent=nodes.length;
   document.getElementById('sC').textContent=nodes.filter(function(n){return n.track==='work'||n.track==='both';}).length;
