@@ -580,7 +580,7 @@ async function runReview() {
   if (preset === 'custom') {
     var f=document.getElementById('rvFrom').value, t=document.getElementById('rvTo').value;
     if (!f||!t) { toast('請選擇日期區間'); return; }
-    from=new Date(f); to=new Date(t); to.setHours(23,59,59);
+    from=new Date(f.replace(/\//g,'-')); to=new Date(t.replace(/\//g,'-')); to.setHours(23,59,59,999);
   } else {
     from = new Date(now.getTime() - parseInt(preset)*24*60*60*1000);
   }
