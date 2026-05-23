@@ -404,6 +404,7 @@ onAuthStateChanged(AUTH, user => {
       const arr = data ? Object.entries(data).map(([id, v]) => ({
         ...v,
         firebaseId: id,
+        id: v.id || id,
         tags: Array.isArray(v.tags) ? v.tags : Object.values(v.tags || {}),
         track: v.track || 'both'
       })) : [];
@@ -453,6 +454,9 @@ var custTags = JSON.parse(localStorage.getItem('ins-ct') || '[]');
 var rvText = '', rvRange = '';
 var rvMeta = null;
 var REVIEW_PROXY_URL = 'https://insight-os-review.vivian-cmc.workers.dev';
+
+function nodeKey(n) { return String((n && (n.firebaseId || n.id)) || ''); }
+function findNodeByKey(key) { return (window.nodes || []).find(n => nodeKey(n) === String(key)); }
 
 async function callReviewProxy(reqBody) {
   if (!REVIEW_PROXY_URL || REVIEW_PROXY_URL.indexOf('YOUR_SUBDOMAIN') > -1) {
@@ -684,7 +688,7 @@ async function saveReview() {
   var meta = rvMeta || {reviewType:reviewTypeOf(preset), reviewFrom:'', reviewTo:'', reviewRangeLabel:rvRange, reviewDepth:'standard', reviewNodeCount:0};
   var title = meta.reviewFrom && meta.reviewTo ? reviewTitle(meta.reviewType, new Date(meta.reviewFrom), new Date(meta.reviewTo)) : ((preset==='90'?'季度回顧 ':'回顧 ')+new Date().toLocaleDateString('zh-TW'));
   var tags = ['review', meta.reviewType, meta.reviewDepth].filter(Boolean);
-  var sn = {title:title, excerpt:rvText.slice(0,80)+'…', tags:tags, track:'both', sourceLabel:'Insight OS 回顧', sourceUrl:'', createdAt:new Date().toISOString(), rawInput:rvText, imageUrl:'', connections:0, reviewType:meta.reviewType, reviewFrom:meta.reviewFrom, reviewTo:meta.reviewTo, reviewRangeLabel:meta.reviewRangeLabel, reviewDepth:meta.reviewDepth, reviewNodeCount:meta.reviewNodeCount};
+  var sn = {id:Date.now(), title:title, excerpt:rvText.slice(0,80)+'…', tags:tags, track:'both', sourceLabel:'Insight OS 回顧', sourceUrl:'', createdAt:new Date().toISOString(), rawInput:rvText, imageUrl:'', connections:0, reviewType:meta.reviewType, reviewFrom:meta.reviewFrom, reviewTo:meta.reviewTo, reviewRangeLabel:meta.reviewRangeLabel, reviewDepth:meta.reviewDepth, reviewNodeCount:meta.reviewNodeCount};
   if (window.DB) await fbSave(sn); else { window.nodes.unshift(sn); renderAll(); }
   toast('回顧已存成卡片 ✓'); toggleReview();
 }
@@ -710,11 +714,12 @@ function renderGrid(list) {
   var known = ['tool','concept','apply','insight','question','reference','dialogue','review'];
   var trkMap = {work:'Work',build:'Build',life:'Life',both:'',cmc:'CMC',fire:'Fire'};
   grid.innerHTML = fl.map((n,i) => {
+    var key = nodeKey(n).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
     var src = n.sourceUrl ? '<a class="csrc" href="'+n.sourceUrl+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+n.sourceLabel+'</a>' : '<span class="csrct">'+(n.sourceLabel||'手動')+'</span>';
     var dt = n.createdAt ? n.createdAt.slice(0,10) : '';
     var trk = n.track==='both' ? '<span class="ctag t-work">Work</span><span class="ctag t-build">Build</span><span class="ctag t-life">Life</span>' : '<span class="ctag t-'+(n.track||'both')+'">'+(trkMap[n.track]||n.track)+'</span>';
     var tgs = (n.tags||[]).map(t=>'<span class="ctag '+(known.indexOf(t)>-1?t:'custom')+'">'+tl(t)+'</span>').join('');
-    return '<div class="card '+(n.track||'both')+'" style="animation-delay:'+i*.04+'s" onclick="openModal('+n.id+')"><div class="ctags">'+tgs+trk+'</div><div class="ctit">'+n.title+'</div><div class="cex">'+n.excerpt+'</div><div class="cft">'+src+'<span class="cdt">'+dt+'</span></div></div>';
+    return '<div class="card '+(n.track||'both')+'" style="animation-delay:'+i*.04+'s" onclick="openModal(\''+key+'\')"><div class="ctags">'+tgs+trk+'</div><div class="ctit">'+n.title+'</div><div class="cex">'+n.excerpt+'</div><div class="cft">'+src+'<span class="cdt">'+dt+'</span></div></div>';
   }).join('');
 }
 
@@ -743,8 +748,7 @@ function switchView(view, el) {
 
 // ── MODAL ──
 function openModal(id) {
-  var nodes = window.nodes || [];
-  var n = nodes.find(x=>x.id===id); if (!n) return; curId=id;
+  var n = findNodeByKey(id); if (!n) return; curId=nodeKey(n);
   document.getElementById('mT').value = n.title||'';
   document.getElementById('mE').value = n.excerpt||'';
   var allTags = ['tool','concept','apply','insight','question','reference','dialogue'].concat(custTags);
@@ -796,9 +800,9 @@ async function saveEdit() {
   document.querySelectorAll('#mTags button').forEach(btn=>{if(btn.getAttribute('data-on')==='1')tags.push(btn.getAttribute('data-tag'));});
   var trBtn=null; document.querySelectorAll('#mTr button').forEach(b=>{if(b.style.color==='rgb(255, 255, 255)')trBtn=b;});
   var track=trBtn?trBtn.getAttribute('data-tr'):'both';
-  var n=nodes.find(x=>x.id===curId);
+  var n=findNodeByKey(curId);
   if(window.DB&&n&&n.firebaseId){await fbUpdate(n.firebaseId,{title,excerpt,tags,track});}
-  else{var idx=nodes.findIndex(x=>x.id===curId);if(idx>-1){nodes[idx]={...nodes[idx],title,excerpt,tags,track};window.nodes=nodes;renderAll();}}
+  else{var idx=nodes.findIndex(x=>nodeKey(x)===String(curId));if(idx>-1){nodes[idx]={...nodes[idx],title,excerpt,tags,track};window.nodes=nodes;renderAll();}}
   closeModal(); toast('已儲存修改 ✓');
 }
 function askDel(){document.getElementById('delBtn').style.display='none';document.getElementById('delConfirm').classList.add('on');}
@@ -806,9 +810,9 @@ function cancelDel(){document.getElementById('delBtn').style.display='';document
 async function doDelete() {
   if(!curId)return;
   var nodes=window.nodes||[];
-  var n=nodes.find(x=>x.id===curId);
+  var n=findNodeByKey(curId);
   if(window.DB&&n&&n.firebaseId)await fbDelete(n.firebaseId);
-  else{window.nodes=nodes.filter(x=>x.id!==curId);renderAll();}
+  else{window.nodes=nodes.filter(x=>nodeKey(x)!==String(curId));renderAll();}
   closeModal();toast('節點已刪除');
 }
 function modalBg(e){if(e.target===document.getElementById('modal'))closeModal();}
